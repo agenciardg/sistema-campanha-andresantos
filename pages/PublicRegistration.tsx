@@ -69,10 +69,13 @@ const PublicRegistration: React.FC = () => {
           return;
         }
 
+        console.log(`🔍 Buscando responsável pelo código: ${codigo}...`);
+
         // Tentar buscar liderança primeiro
         const lideranca = await liderancasService.buscarPorCodigo(codigo);
 
         if (lideranca) {
+          console.log('✅ Líder encontrado:', lideranca.nome);
           // Buscar equipe da liderança
           const equipe = lideranca.equipe_id ? await equipesService.buscarPorId(lideranca.equipe_id) : null;
 
@@ -89,10 +92,12 @@ const PublicRegistration: React.FC = () => {
             organizacaoNome: organizacao?.nome || null,
           });
         } else {
+          console.log('ℹ️ Líder não encontrado, tentando buscar coordenador...');
           // Se não encontrou liderança, tentar buscar coordenador pelo código único
           const coordenador = await coordenadoresService.buscarPorCodigo(codigo);
 
           if (coordenador) {
+            console.log('✅ Coordenador encontrado:', coordenador.nome);
             // Buscar organização do coordenador
             const organizacao = coordenador.organizacao_id ? await organizacoesService.buscarPorId(coordenador.organizacao_id) : null;
 
@@ -106,12 +111,13 @@ const PublicRegistration: React.FC = () => {
               organizacaoNome: organizacao?.nome || null,
             });
           } else {
-            setError('Código de cadastro inválido ou não encontrado.');
+            console.warn(`❌ Código "${codigo}" não localizado em nenhuma tabela.`);
+            setError('Código de cadastro inválido ou não encontrado. Verifique se o link está correto.');
           }
         }
       } catch (err) {
         console.error('Erro ao buscar responsável:', err);
-        setError('Erro ao carregar dados. Tente novamente.');
+        setError('Ocorreu um erro ao carregar os dados. Por favor, recarregue a página.');
       } finally {
         setIsLoading(false);
       }
@@ -1119,8 +1125,8 @@ const PublicRegistration: React.FC = () => {
 
               {/* 11. RESPONSÁVEL */}
               <h3 className="text-white font-bold text-base mt-6 mb-2">11. RESPONSÁVEL PELO TRATAMENTO DE DADOS</h3>
-              <p><strong>Controlador de Dados:</strong><br/>André Santos<br/>Email: contato@andresantosoficial.com.br</p>
-              <p className="mt-2"><strong>Encarregado de Proteção de Dados (DPO):</strong><br/>Email: contato@andresantosoficial.com.br</p>
+              <p><strong>Controlador de Dados:</strong><br />André Santos<br />Email: contato@andresantosoficial.com.br</p>
+              <p className="mt-2"><strong>Encarregado de Proteção de Dados (DPO):</strong><br />Email: contato@andresantosoficial.com.br</p>
 
               {/* 12. ALTERAÇÕES */}
               <h3 className="text-white font-bold text-base mt-6 mb-2">12. ALTERAÇÕES NESTA POLÍTICA</h3>

@@ -1,0 +1,52 @@
+{
+  "agents": {
+    "development-tools": [
+      "code-reviewer",
+      "debugger",
+      "context-manager",
+      "error-detective",
+      "mcp-expert",
+      "command-expert",
+      "test-engineer"
+    ],
+    "development-team": [
+      "ui-ux-designer",
+      "frontend-developer",
+      "backend-architect",
+      "devops-engineer"
+    ],
+    "ai-specialists": [
+      "prompt-engineer",
+      "task-decomposition-expert",
+      "search-specialist"
+    ],
+    "programming-languages": [
+      "python-pro",
+      "typescript-pro",
+      "javascript-pro"
+    ],
+    "data-ai": [
+      "ai-engineer"
+    ],
+    "deep-research-team": [
+      "data-analyst"
+    ],
+    "business-marketing": [
+      "content-marketer"
+    ],
+    "database": [
+      "database-architect"
+    ],
+    "expert-advisors": [
+      "architect-review"
+    ],
+    "documentation": [
+      "api-documenter"
+    ],
+    "devops-infrastructure": [
+      "deployment-engineer"
+    ]
+  },
+  "description": "Agentes especializados do Claude Code disponíveis para uso no projeto",
+  "usage": "Use estes agentes através do Task tool com subagent_type apropriado"
+}

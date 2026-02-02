@@ -1,0 +1,49 @@
+{
+  "project": {
+    "name": "Sistema de Controle de Campanha",
+    "type": "web-application",
+    "stack": {
+      "frontend": ["React 19", "TypeScript", "Vite", "TailwindCSS"],
+      "backend": ["Supabase"],
+      "maps": ["Leaflet", "React-Leaflet"],
+      "charts": ["Recharts"],
+      "data": ["XLSX"]
+    }
+  },
+  "preferred_agents": {
+    "frontend": "frontend-developer",
+    "backend": "backend-architect",
+    "database": "database-architect",
+    "typescript": "typescript-pro",
+    "review": "code-reviewer",
+    "debug": "debugger",
+    "test": "test-engineer",
+    "ui": "ui-ux-designer"
+  },
+  "active_features": {
+    "authentication": true,
+    "maps": true,
+    "data_export": true,
+    "multi_tenant": true,
+    "whatsapp_integration": true
+  },
+  "development_workflow": {
+    "version_control": "git",
+    "deployment": "cPanel",
+    "database": "Supabase PostgreSQL",
+    "api": "Supabase Edge Functions"
+  },
+  "recommended_skills": [
+    "xlsx",
+    "pdf-processing-pro",
+    "api-documenter",
+    "test-engineer",
+    "content-research-writer"
+  ],
+  "code_standards": {
+    "language": "TypeScript",
+    "style": "Functional Components",
+    "state_management": "React Context",
+    "file_naming": "PascalCase for components, camelCase for utilities"
+  }
+}

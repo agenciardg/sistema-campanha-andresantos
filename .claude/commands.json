@@ -1,0 +1,17 @@
+{
+  "commands": {
+    "utilities": [
+      "ultra-think"
+    ],
+    "project-management": [
+      "todo",
+      "init-project"
+    ]
+  },
+  "description": "Comandos disponíveis para gerenciamento e utilidades do projeto",
+  "usage": {
+    "ultra-think": "Análise profunda e pensamento estruturado sobre problemas complexos",
+    "todo": "Gerenciamento de tarefas e lista de afazeres",
+    "init-project": "Inicialização e configuração de novos projetos"
+  }
+}

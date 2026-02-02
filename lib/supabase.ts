@@ -220,7 +220,7 @@ export const coordenadoresMasterService = {
       .select('*')
       .eq('id', id)
       .single();
-    
+
     if (error) throw error;
     return data;
   },
@@ -232,7 +232,7 @@ export const coordenadoresMasterService = {
       .select('*')
       .eq('email', email)
       .single();
-    
+
     if (error && error.code !== 'PGRST116') throw error;
     return data;
   },
@@ -247,7 +247,7 @@ export const coordenadoresMasterService = {
       }])
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
@@ -263,7 +263,7 @@ export const coordenadoresMasterService = {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   },
@@ -274,7 +274,7 @@ export const coordenadoresMasterService = {
       .from('andresantos_coordenadores_master')
       .delete()
       .eq('id', id);
-    
+
     if (error) throw error;
   },
 
@@ -284,7 +284,7 @@ export const coordenadoresMasterService = {
       .from('andresantos_coordenadores_master')
       .update({ ultimo_acesso: new Date().toISOString() })
       .eq('id', id);
-    
+
     if (error) throw error;
   },
 
@@ -292,12 +292,12 @@ export const coordenadoresMasterService = {
   async toggleAtivo(id: string, ativo: boolean): Promise<void> {
     const { error } = await supabase
       .from('andresantos_coordenadores_master')
-      .update({ 
+      .update({
         ativo,
         atualizado_em: new Date().toISOString(),
       })
       .eq('id', id);
-    
+
     if (error) throw error;
   },
 };
@@ -453,9 +453,9 @@ export const equipesService = {
       .from('andresantos_liderancas')
       .select('id')
       .eq('equipe_id', equipeId);
-    
+
     if (!liderancas || liderancas.length === 0) return 0;
-    
+
     const liderancaIds = liderancas.map(l => l.id);
     const { count, error } = await supabase
       .from('andresantos_cadastros')
@@ -510,7 +510,7 @@ export const coordenadoresService = {
       .from('andresantos_coordenadores')
       .select('*')
       .eq('codigo_unico', codigo)
-      .single();
+      .maybeSingle();
     if (error && error.code !== 'PGRST116') throw error;
     return data;
   },
@@ -611,7 +611,7 @@ export const liderancasService = {
       .from('andresantos_liderancas')
       .select('*')
       .eq('codigo_unico', codigo)
-      .single();
+      .maybeSingle();
     if (error && error.code !== 'PGRST116') throw error;
     return data;
   },
@@ -775,12 +775,12 @@ export const configuracoesService = {
   async salvar(chave: string, valor: string): Promise<void> {
     const { error } = await supabase
       .from('andresantos_configuracoes')
-      .upsert({ 
-        chave, 
-        valor, 
-        atualizado_em: new Date().toISOString() 
-      }, { 
-        onConflict: 'chave' 
+      .upsert({
+        chave,
+        valor,
+        atualizado_em: new Date().toISOString()
+      }, {
+        onConflict: 'chave'
       });
     if (error) throw error;
   },

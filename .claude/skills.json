@@ -1,0 +1,49 @@
+{
+  "skills": {
+    "development": [
+      "skill-creator",
+      "mcp-builder"
+    ],
+    "document-processing": [
+      "docx",
+      "pdf-processing-pro",
+      "xlsx",
+      "pptx",
+      "pdf-anthropic",
+      "pdf-processing"
+    ],
+    "creative-design": [
+      "canvas-design"
+    ],
+    "enterprise-communication": [
+      "excel-analysis",
+      "email-composer"
+    ],
+    "business-marketing": [
+      "content-research-writer"
+    ],
+    "media": [
+      "image-enhancer",
+      "video-downloader"
+    ],
+    "productivity": [
+      "file-organizer",
+      "invoice-organizer"
+    ]
+  },
+  "description": "Skills disponíveis para processamento de documentos e automação",
+  "usage_examples": {
+    "xlsx": "Processamento e análise de planilhas Excel",
+    "pdf-processing-pro": "Processamento avançado de PDFs",
+    "docx": "Manipulação de documentos Word",
+    "skill-creator": "Criação de novas skills personalizadas",
+    "mcp-builder": "Construção de servidores MCP customizados",
+    "canvas-design": "Design e criação visual",
+    "excel-analysis": "Análise de dados em Excel",
+    "email-composer": "Composição de emails profissionais",
+    "content-research-writer": "Pesquisa e criação de conteúdo",
+    "image-enhancer": "Melhoria de qualidade de imagens",
+    "file-organizer": "Organização automática de arquivos",
+    "invoice-organizer": "Organização de faturas e documentos fiscais"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "mcp_servers": {
+    "devtools": [
+      "context7",
+      "chrome-devtools"
+    ],
+    "integration": [
+      "memory-integration"
+    ],
+    "browser_automation": [
+      "playwright-mcp-server"
+    ],
+    "filesystem": [
+      "filesystem-access"
+    ]
+  },
+  "description": "Servidores MCP (Model Context Protocol) configurados no projeto",
+  "active_servers": {
+    "context7": {
+      "description": "Acesso a documentação atualizada de bibliotecas",
+      "status": "active"
+    },
+    "memory-integration": {
+      "description": "Sistema de memória e grafo de conhecimento",
+      "status": "active"
+    },
+    "playwright-mcp-server": {
+      "description": "Automação de navegador com Playwright",
+      "status": "active"
+    },
+    "chrome-devtools": {
+      "description": "Integração com Chrome DevTools",
+      "status": "active"
+    },
+    "filesystem-access": {
+      "description": "Acesso ao sistema de arquivos",
+      "status": "active"
+    }
+  }
+}

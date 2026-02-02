@@ -1,0 +1,15 @@
+{
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "context7",
+    "memory",
+    "executeautomation-playwright-server",
+    "filesystem",
+    "chrome-devtools"
+  ],
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)"
+    ]
+  }
+}
