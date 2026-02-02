@@ -12,8 +12,8 @@ export const gerarCodigoUnico = (): string => {
 
 // Obter URL base da aplicação
 export const getBaseUrl = (): string => {
-  // Em produção, substituir por URL real
-  return window.location.origin + '/#';
+  // Retornar subdomínio fixo para cadastro de apoiadores conforme solicitado
+  return 'https://apoiadores.andresantosoficial.com.br/#';
 };
 
 // Gerar link de cadastro
@@ -29,12 +29,12 @@ export const gerarLinkWhatsApp = (
 ): string => {
   // Limpar número (remover caracteres especiais)
   const numeroLimpo = numeroWhatsApp.replace(/\D/g, '');
-  
+
   // Mensagem pré-formatada
   const mensagem = encodeURIComponent(
     `Olá! Quero me cadastrar como apoiador.\n\nResponsável: ${nomeResponsavel}\nCódigo: ${codigo}`
   );
-  
+
   return `https://wa.me/${numeroLimpo}?text=${mensagem}`;
 };
 
@@ -83,11 +83,11 @@ export const gerarCodigoUnicoSeguro = async (): Promise<string> => {
   let codigo = gerarCodigoUnico();
   let tentativas = 0;
   const maxTentativas = 10;
-  
+
   while (await verificarCodigoExistente(codigo) && tentativas < maxTentativas) {
     codigo = gerarCodigoUnico();
     tentativas++;
   }
-  
+
   return codigo;
 };
