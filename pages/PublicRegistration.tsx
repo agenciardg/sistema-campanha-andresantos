@@ -406,9 +406,16 @@ const PublicRegistration: React.FC = () => {
       });
 
       setSubmitSuccess(true);
-    } catch (err) {
+    } catch (err: any) {
+      console.error('❌ Erro detalhado ao salvar cadastro:', err);
+
+      // Log detalhado do erro para ajudar no diagnóstico
+      const errorMessage = err?.message || 'Erro desconhecido';
+      const errorCode = err?.code || 'S/C';
+      console.error(`Código: ${errorCode} | Mensagem: ${errorMessage}`);
+
       logger.error('Erro ao salvar cadastro público', err);
-      alert('Erro ao enviar cadastro. Tente novamente.');
+      alert(`Erro ao enviar cadastro: ${errorMessage}\n\nTente novamente.`);
     } finally {
       setIsSubmitting(false);
     }
