@@ -1,0 +1,28 @@
+# Supabase Edge Functions Configuration
+# =====================================
+# Este arquivo configura o comportamento das Edge Functions do projeto.
+# Documentacao: https://supabase.com/docs/guides/functions/function-configuration
+
+# =============================================================================
+# geocoding-proxy - Proxy para Google Geocoding API
+# =============================================================================
+# JWT desabilitado porque esta funcao eh usada para:
+# - Cadastro publico de apoiadores (usuarios nao autenticados)
+# - Requisicoes de geolocalizacao durante o formulario de cadastro
+# IMPORTANTE: A seguranca eh garantida pela API key do Google Maps (server-side)
+[functions.geocoding-proxy]
+verify_jwt = false
+
+# =============================================================================
+# evolution-proxy - Proxy para Evolution API (WhatsApp)
+# =============================================================================
+# JWT habilitado (padrao) - apenas usuarios autenticados podem enviar mensagens
+[functions.evolution-proxy]
+verify_jwt = true
+
+# =============================================================================
+# admin-manager - Gerenciamento de administradores
+# =============================================================================
+# JWT habilitado (padrao) - operacoes administrativas requerem autenticacao
+[functions.admin-manager]
+verify_jwt = true
