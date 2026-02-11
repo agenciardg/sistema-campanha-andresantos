@@ -314,6 +314,40 @@ export async function sendTextMessage(
   };
 }
 
+/**
+ * Envia uma imagem via WhatsApp (base64 ou URL)
+ */
+export async function sendImageMessage(
+  config: EvolutionConfig,
+  number: string,
+  media: string,
+  caption?: string,
+  fileName?: string
+): Promise<{ success: boolean; data?: SendMessageResponse; error?: string }> {
+  const cleanNumber = number.replace(/\D/g, '');
+
+  // Remover prefixo data URL se presente (ex: "data:image/png;base64,...")
+  const cleanMedia = media.includes(',') ? media.split(',')[1] : media;
+
+  const result = await callEvolutionProxy('sendMedia', config.instance_name, {
+    number: cleanNumber,
+    mediatype: 'image',
+    mimetype: 'image/png',
+    media: cleanMedia,
+    caption: caption || '',
+    fileName: fileName || 'qrcode.png',
+  });
+
+  if (!result.success) {
+    return { success: false, error: result.error };
+  }
+
+  return {
+    success: true,
+    data: result.data as SendMessageResponse,
+  };
+}
+
 // ==================== UTILITÁRIOS ====================
 
 /**

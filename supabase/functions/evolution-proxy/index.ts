@@ -186,6 +186,20 @@ Deno.serve(async (req) => {
         });
         break;
 
+      case "sendMedia":
+        endpoint = `/message/sendMedia/${effectiveInstanceName}`;
+        method = "POST";
+        body = JSON.stringify({
+          number: data.number,
+          mediatype: data.mediatype || "image",
+          mimetype: data.mimetype || "image/png",
+          caption: data.caption || "",
+          media: data.media,
+          fileName: data.fileName || "qrcode.png",
+          delay: 1200,
+        });
+        break;
+
       case "fetchInstances":
         endpoint = "/instance/fetchInstances";
         method = "GET";

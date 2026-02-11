@@ -6,10 +6,12 @@
 import {
   getEvolutionConfig,
   sendTextMessage,
+  sendImageMessage,
   formatPhoneNumber,
   EvolutionConfig,
 } from './evolutionApi';
 import { getConfig } from './configService';
+import QRCode from 'qrcode';
 
 // ==================== TIPOS ====================
 
@@ -90,6 +92,25 @@ async function gerarMensagemTarefa(tarefa: TarefaNotificacao): Promise<string> {
     .replace(/\{descricao\}/g, tarefa.descricao || 'Sem descrição')
     .replace(/\{prioridade\}/g, prioridadeStr)
     .replace(/\{prazo\}/g, prazoStr);
+}
+
+// ==================== QR CODE ====================
+
+/**
+ * Gera um QR code como base64 data URL (png) a partir de uma URL
+ */
+async function gerarQRCodeBase64(url: string): Promise<string | null> {
+  try {
+    const dataUrl = await QRCode.toDataURL(url, {
+      width: 400,
+      margin: 2,
+      color: { dark: '#000000', light: '#ffffff' },
+    });
+    return dataUrl;
+  } catch (error) {
+    console.error('Erro ao gerar QR Code base64:', error);
+    return null;
+  }
 }
 
 // ==================== FUNÇÕES DE NOTIFICAÇÃO ====================
@@ -186,7 +207,7 @@ export async function notificarNovaLideranca(
     // Formatar telefone
     const telefoneFormatado = formatPhoneNumber(lideranca.telefone);
 
-    // Enviar mensagem
+    // Enviar mensagem de texto
     const result = await sendTextMessage(config, telefoneFormatado, mensagem);
 
     if (!result.success) {
@@ -194,6 +215,20 @@ export async function notificarNovaLideranca(
         success: false,
         error: result.error || 'Erro ao enviar mensagem',
       };
+    }
+
+    // Enviar QR Code da página de cadastro
+    const qrBase64 = await gerarQRCodeBase64(linkCadastro);
+    if (qrBase64) {
+      const qrResult = await sendImageMessage(
+        config,
+        telefoneFormatado,
+        qrBase64,
+        `QR Code - Cadastro de apoiadores de ${lideranca.nome}`
+      );
+      if (!qrResult.success) {
+        console.warn('QR Code não enviado (texto já foi):', qrResult.error);
+      }
     }
 
     console.log(`✅ Notificação enviada para liderança: ${lideranca.nome}`);
@@ -260,7 +295,7 @@ export async function notificarNovoCoordenador(
     // Formatar telefone
     const telefoneFormatado = formatPhoneNumber(coordenador.telefone);
 
-    // Enviar mensagem
+    // Enviar mensagem de texto
     const result = await sendTextMessage(config, telefoneFormatado, mensagem);
 
     if (!result.success) {
@@ -268,6 +303,20 @@ export async function notificarNovoCoordenador(
         success: false,
         error: result.error || 'Erro ao enviar mensagem',
       };
+    }
+
+    // Enviar QR Code da página de cadastro
+    const qrBase64 = await gerarQRCodeBase64(linkCadastro);
+    if (qrBase64) {
+      const qrResult = await sendImageMessage(
+        config,
+        telefoneFormatado,
+        qrBase64,
+        `QR Code - Cadastro de apoiadores de ${coordenador.nome}`
+      );
+      if (!qrResult.success) {
+        console.warn('QR Code não enviado (texto já foi):', qrResult.error);
+      }
     }
 
     console.log(`✅ Notificação enviada para coordenador: ${coordenador.nome}`);
