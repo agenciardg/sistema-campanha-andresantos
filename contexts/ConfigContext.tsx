@@ -24,9 +24,10 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const loadConfigs = useCallback(async () => {
     try {
       const allConfigs = await getAllConfigs();
+      console.log('[ConfigContext] Configs carregadas. links.url_base_cadastro =', allConfigs['links.url_base_cadastro']);
       setConfigs(allConfigs);
     } catch (error) {
-      console.error('Erro ao carregar configurações:', error);
+      console.error('[ConfigContext] ERRO ao carregar configurações:', error);
     } finally {
       setLoading(false);
     }

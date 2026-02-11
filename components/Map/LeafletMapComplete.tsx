@@ -503,6 +503,8 @@ const LeafletMapComplete: React.FC<LeafletMapCompleteProps> = ({
     fetch('/geojson/sp-estado.json')
       .then(res => res.json())
       .then(data => {
+        // Verificar se o mapa ainda existe (componente pode ter desmontado)
+        if (!mapInstanceRef.current) return;
         L.geoJSON(data, {
           style: {
             color: '#1e5a8d',

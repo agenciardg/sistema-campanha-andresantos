@@ -181,6 +181,7 @@ export async function getAllConfigs(): Promise<Record<string, string>> {
 
   try {
     const allRows = await configuracoesService.listarTodas();
+    console.log('[ConfigService] listarTodas retornou', allRows.length, 'registros:', allRows.map(r => r.chave));
 
     // Sobrescrever com valores do banco e alimentar cache
     allRows.forEach(row => {
@@ -188,9 +189,10 @@ export async function getAllConfigs(): Promise<Record<string, string>> {
       setCache(row.chave, row.valor);
     });
 
+    console.log('[ConfigService] links.url_base_cadastro =', resultado['links.url_base_cadastro']);
     return resultado;
   } catch (error) {
-    console.error('Erro ao buscar todas as configs:', error);
+    console.error('[ConfigService] ERRO ao buscar todas as configs:', error);
     return resultado; // Retorna com padrões em caso de erro
   }
 }

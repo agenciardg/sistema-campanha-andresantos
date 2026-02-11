@@ -10,7 +10,7 @@ import { useConfig } from '../contexts/ConfigContext';
 const CoordinatorDetails: React.FC = () => {
   const navigate = useNavigate();
   const { coordinatorId } = useParams<{ coordinatorId: string }>();
-  const { getConfigValue } = useConfig();
+  const { getConfigValue, loading: configLoading } = useConfig();
   const baseUrlCadastro = getConfigValue('links.url_base_cadastro');
   const [loading, setLoading] = useState(true);
   const [coordenador, setCoordenador] = useState<Coordenador | null>(null);
@@ -70,7 +70,7 @@ const CoordinatorDetails: React.FC = () => {
   const liderancaIds = liderancasDoCoord.map(l => l.id);
   const cadastrosDoCoord = cadastros.filter(c => c.lideranca_id && liderancaIds.includes(c.lideranca_id));
 
-  if (loading) {
+  if (loading || configLoading) {
     return (
       <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col items-center justify-center min-h-[50vh]">
         <div className="animate-spin h-8 w-8 border-2 border-gray-500 border-t-white rounded-full mb-4"></div>

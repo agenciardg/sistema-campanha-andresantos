@@ -10,7 +10,7 @@ import { useConfig } from '../contexts/ConfigContext';
 const LeaderDetails: React.FC = () => {
   const navigate = useNavigate();
   const { leaderId } = useParams<{ leaderId: string }>();
-  const { getConfigValue } = useConfig();
+  const { getConfigValue, loading: configLoading } = useConfig();
   const baseUrlCadastro = getConfigValue('links.url_base_cadastro');
   const [loading, setLoading] = useState(true);
   const [lideranca, setLideranca] = useState<Lideranca | null>(null);
@@ -44,7 +44,7 @@ const LeaderDetails: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (loading || configLoading) {
     return (
       <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col items-center justify-center min-h-[50vh]">
         <div className="animate-spin h-8 w-8 border-2 border-gray-500 border-t-white rounded-full mb-4"></div>
