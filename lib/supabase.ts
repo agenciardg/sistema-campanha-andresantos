@@ -432,6 +432,13 @@ export const equipesService = {
   },
 
   async excluir(id: string): Promise<void> {
+    // Desvincular lideranças da equipe antes de excluir (FK com NO ACTION)
+    const { error: unlinkError } = await supabase
+      .from('pltdataandrebueno_liderancas')
+      .update({ equipe_id: null, atualizado_em: new Date().toISOString() })
+      .eq('equipe_id', id);
+    if (unlinkError) throw unlinkError;
+
     const { error } = await supabase
       .from('pltdataandrebueno_equipes')
       .delete()
