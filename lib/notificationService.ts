@@ -138,20 +138,20 @@ async function verificarEvolutionConectada(): Promise<EvolutionConfig | null> {
 
 /**
  * Gera o link de cadastro para uma liderança
+ * Lê a URL base da configuração do banco de dados
  */
-export function gerarLinkCadastroLideranca(codigoUnico: string): string {
-  // Usa a URL base do sistema
-  const baseUrl = window.location.origin;
-  return `${baseUrl}/#/c/${codigoUnico}`;
+export async function gerarLinkCadastroLideranca(codigoUnico: string): Promise<string> {
+  const baseUrl = (await getConfig('links.url_base_cadastro')).replace(/\/+$/, '');
+  return `${baseUrl}/c/${codigoUnico}`;
 }
 
 /**
  * Gera o link de cadastro para um coordenador
+ * Lê a URL base da configuração do banco de dados
  */
-export function gerarLinkCadastroCoordenador(codigoUnico: string): string {
-  // Usa a URL base do sistema
-  const baseUrl = window.location.origin;
-  return `${baseUrl}/#/c/${codigoUnico}`;
+export async function gerarLinkCadastroCoordenador(codigoUnico: string): Promise<string> {
+  const baseUrl = (await getConfig('links.url_base_cadastro')).replace(/\/+$/, '');
+  return `${baseUrl}/c/${codigoUnico}`;
 }
 
 /**
@@ -199,7 +199,7 @@ export async function notificarNovaLideranca(
     }
 
     // Gerar link de cadastro
-    const linkCadastro = gerarLinkCadastroLideranca(lideranca.codigo_unico);
+    const linkCadastro = await gerarLinkCadastroLideranca(lideranca.codigo_unico);
 
     // Gerar mensagem (incluindo equipe se disponível)
     const mensagem = await gerarMensagemLideranca(lideranca.nome, linkCadastro, lideranca.equipe_nome);
@@ -287,7 +287,7 @@ export async function notificarNovoCoordenador(
     }
 
     // Gerar link de cadastro
-    const linkCadastro = gerarLinkCadastroCoordenador(coordenador.codigo_unico);
+    const linkCadastro = await gerarLinkCadastroCoordenador(coordenador.codigo_unico);
 
     // Gerar mensagem
     const mensagem = await gerarMensagemCoordenador(coordenador.nome, linkCadastro);

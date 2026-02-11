@@ -1,14 +1,9 @@
 // Serviço para geração de links e QR Codes para Lideranças e Coordenadores
-import { getDefaultValue } from '../lib/configService';
 
-// Obter URL base da aplicação
-const getBaseUrl = (): string => {
-  return getDefaultValue('links.url_base_cadastro');
-};
-
-// Gerar link de cadastro
-export const gerarLinkCadastro = (codigo: string): string => {
-  return `${getBaseUrl()}/c/${codigo}`;
+// Gerar link de cadastro usando a URL base fornecida pelo contexto de configuração
+export const gerarLinkCadastro = (baseUrl: string, codigo: string): string => {
+  const url = baseUrl.replace(/\/+$/, '');
+  return `${url}/c/${codigo}`;
 };
 
 // Armazenamento local das configurações

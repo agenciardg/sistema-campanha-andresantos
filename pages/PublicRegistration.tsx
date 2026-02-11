@@ -41,6 +41,7 @@ const PublicRegistration: React.FC = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPolitica, setShowPolitica] = useState(false);
+  const [showDuplicado, setShowDuplicado] = useState<{ campo: 'telefone' | 'email' } | null>(null);
 
   const [responsavel, setResponsavel] = useState<ResponsavelData | null>(null);
 
@@ -354,6 +355,18 @@ const PublicRegistration: React.FC = () => {
       });
 
       logger.debug('Dados sanitizados para cadastro', { sanitizedData });
+
+      // Verificar duplicidade de telefone/email antes de prosseguir
+      const duplicidade = await cadastrosService.verificarDuplicidade(
+        sanitizedData.telefone || '',
+        sanitizedData.email || ''
+      );
+      if (duplicidade.duplicado && duplicidade.campo) {
+        setShowDuplicado({ campo: duplicidade.campo });
+        setIsSubmitting(false);
+        return;
+      }
+
       // Geocodificar endereço usando serviço centralizado
       logger.geocoding('Geocodificando endereço antes de salvar');
       const resultado = await geocodificarEndereco({
@@ -1134,6 +1147,55 @@ const PublicRegistration: React.FC = () => {
                 className="w-full bg-gradient-to-r from-[#3a9ad9] to-[#5bb8f0] hover:from-[#2d87c4] hover:to-[#4aa8e0] text-white font-semibold py-3 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
               >
                 Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ====== MODAL CADASTRO DUPLICADO ====== */}
+      {showDuplicado && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+          <div className="bg-white rounded-2xl border border-[#d6e8f5] max-w-md w-full overflow-hidden shadow-2xl animate-slideUp">
+            {/* Header */}
+            <div className="flex items-center gap-3 px-6 py-5 border-b border-[#e8f0f7] bg-[#fef8f0]">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <Icon name="warning" className="text-[28px] text-amber-500" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-[#1a3a52]">Cadastro já existe</h2>
+                <p className="text-sm text-[#5a7d95]">Encontramos um registro duplicado</p>
+              </div>
+            </div>
+
+            {/* Conteúdo */}
+            <div className="p-6">
+              <div className="bg-[#f0f7fd] border border-[#d6e8f5] rounded-xl p-4 mb-5">
+                <div className="flex items-start gap-3">
+                  <Icon name="info" className="text-[22px] text-[#3a9ad9] flex-shrink-0 mt-0.5" />
+                  <div>
+                    {showDuplicado.campo === 'telefone' ? (
+                      <p className="text-sm text-[#1a3a52] leading-relaxed">
+                        O número de <strong>WhatsApp</strong> informado já foi utilizado em um cadastro anterior. Cada número de telefone só pode ser cadastrado uma vez.
+                      </p>
+                    ) : (
+                      <p className="text-sm text-[#1a3a52] leading-relaxed">
+                        O <strong>e-mail</strong> informado já foi utilizado em um cadastro anterior. Cada endereço de e-mail só pode ser cadastrado uma vez.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-xs text-[#5a7d95] text-center mb-5">
+                Se você acredita que isso é um erro, utilize um {showDuplicado.campo === 'telefone' ? 'número' : 'e-mail'} diferente ou entre em contato com o responsável.
+              </p>
+
+              <button
+                onClick={() => setShowDuplicado(null)}
+                className="w-full bg-gradient-to-r from-[#3a9ad9] to-[#5bb8f0] hover:from-[#2d87c4] hover:to-[#4aa8e0] text-white font-semibold py-3 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
+              >
+                Entendi, voltar ao formulário
               </button>
             </div>
           </div>

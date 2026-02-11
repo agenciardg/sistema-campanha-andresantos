@@ -5,10 +5,13 @@ import QRCodeCard from '../components/QRCodeCard';
 import * as XLSX from 'xlsx';
 import { liderancasService, equipesService, cadastrosService, Lideranca, Equipe, Cadastro } from '../lib/supabase';
 import { gerarLinkCadastro } from '../services/linkService';
+import { useConfig } from '../contexts/ConfigContext';
 
 const LeaderDetails: React.FC = () => {
   const navigate = useNavigate();
   const { leaderId } = useParams<{ leaderId: string }>();
+  const { getConfigValue } = useConfig();
+  const baseUrlCadastro = getConfigValue('links.url_base_cadastro');
   const [loading, setLoading] = useState(true);
   const [lideranca, setLideranca] = useState<Lideranca | null>(null);
   const [equipe, setEquipe] = useState<Equipe | null>(null);
@@ -205,14 +208,14 @@ const LeaderDetails: React.FC = () => {
           <div className="flex items-center gap-2">
             <input
               type="text"
-              value={gerarLinkCadastro(lideranca.codigo_unico || '')}
+              value={gerarLinkCadastro(baseUrlCadastro, lideranca.codigo_unico || '')}
               readOnly
               className="flex-1 px-3 py-2 text-sm rounded-lg dark:bg-white/5 light:bg-white dark:text-white light:text-gray-900 border dark:border-white/10 light:border-gray-300 focus:outline-none"
             />
             <button
               onClick={async () => {
                 try {
-                  await navigator.clipboard.writeText(gerarLinkCadastro(lideranca.codigo_unico || ''));
+                  await navigator.clipboard.writeText(gerarLinkCadastro(baseUrlCadastro, lideranca.codigo_unico || ''));
                   setCopiado(true);
                   setTimeout(() => setCopiado(false), 2000);
                 } catch (err) {
@@ -241,7 +244,7 @@ const LeaderDetails: React.FC = () => {
       {/* QR Code de Cadastro */}
       {lideranca.codigo_unico && (
         <QRCodeCard
-          url={gerarLinkCadastro(lideranca.codigo_unico)}
+          url={gerarLinkCadastro(baseUrlCadastro, lideranca.codigo_unico)}
           nome={lideranca.nome}
         />
       )}

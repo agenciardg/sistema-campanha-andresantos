@@ -785,6 +785,19 @@ export const cadastrosService = {
     return data;
   },
 
+  /** Verifica se já existe cadastro com o mesmo telefone ou email (via RPC seguro) */
+  async verificarDuplicidade(telefone: string, email: string): Promise<{ duplicado: boolean; campo: 'telefone' | 'email' | null }> {
+    const { data, error } = await supabase.rpc('check_cadastro_duplicidade', {
+      p_telefone: telefone || '',
+      p_email: email || '',
+    });
+    if (error) {
+      console.error('Erro ao verificar duplicidade:', error);
+      return { duplicado: false, campo: null };
+    }
+    return { duplicado: data?.duplicado ?? false, campo: data?.campo ?? null };
+  },
+
   /** Insert sem .select() — para uso público (anon) que não tem permissão SELECT */
   async criarPublico(dados: Omit<Cadastro, 'id' | 'criado_em'>): Promise<void> {
     const { error } = await supabase

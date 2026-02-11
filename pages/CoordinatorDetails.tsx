@@ -5,10 +5,13 @@ import QRCodeCard from '../components/QRCodeCard';
 import * as XLSX from 'xlsx';
 import { coordenadoresService, liderancasService, cadastrosService, Coordenador, Lideranca, Cadastro, Equipe, supabase } from '../lib/supabase';
 import { gerarLinkCadastro } from '../services/linkService';
+import { useConfig } from '../contexts/ConfigContext';
 
 const CoordinatorDetails: React.FC = () => {
   const navigate = useNavigate();
   const { coordinatorId } = useParams<{ coordinatorId: string }>();
+  const { getConfigValue } = useConfig();
+  const baseUrlCadastro = getConfigValue('links.url_base_cadastro');
   const [loading, setLoading] = useState(true);
   const [coordenador, setCoordenador] = useState<Coordenador | null>(null);
   const [liderancas, setLiderancas] = useState<Lideranca[]>([]);
@@ -238,14 +241,14 @@ const CoordinatorDetails: React.FC = () => {
           <div className="flex items-center gap-2">
             <input
               type="text"
-              value={gerarLinkCadastro(coordenador.codigo_unico || '')}
+              value={gerarLinkCadastro(baseUrlCadastro, coordenador.codigo_unico || '')}
               readOnly
               className="flex-1 px-3 py-2 text-sm rounded-lg dark:bg-white/5 light:bg-white dark:text-white light:text-gray-900 border dark:border-white/10 light:border-gray-300 focus:outline-none"
             />
             <button
               onClick={async () => {
                 try {
-                  await navigator.clipboard.writeText(gerarLinkCadastro(coordenador.codigo_unico || ''));
+                  await navigator.clipboard.writeText(gerarLinkCadastro(baseUrlCadastro, coordenador.codigo_unico || ''));
                   setCopiado(true);
                   setTimeout(() => setCopiado(false), 2000);
                 } catch (err) {
@@ -274,7 +277,7 @@ const CoordinatorDetails: React.FC = () => {
       {/* QR Code de Cadastro */}
       {coordenador.codigo_unico && (
         <QRCodeCard
-          url={gerarLinkCadastro(coordenador.codigo_unico)}
+          url={gerarLinkCadastro(baseUrlCadastro, coordenador.codigo_unico)}
           nome={coordenador.nome}
         />
       )}
