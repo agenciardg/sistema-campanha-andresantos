@@ -1,0 +1,5 @@
+{
+  "name": "Campaign Manager",
+  "description": "A comprehensive campaign management system to track voters, teams, leaders, and organizations. Includes dashboards, kanban boards, and registration forms.",
+  "requestFramePermissions": []
+}

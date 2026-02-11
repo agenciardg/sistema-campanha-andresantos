@@ -1,0 +1,38 @@
+{
+  "name": "campaign-manager",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:production": "vite build --mode production",
+    "preview": "vite preview",
+    "clean": "rm -rf dist",
+    "rebuild": "npm run clean && npm run build",
+    "supabase:login": "npx supabase login",
+    "supabase:link": "npx supabase link --project-ref bnyjhvcmasloqunstjoz",
+    "supabase:deploy:geocoding": "npx supabase functions deploy geocoding-proxy --no-verify-jwt",
+    "supabase:deploy:all": "npx supabase functions deploy"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.91.1",
+    "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
+    "lucide-react": "^0.562.0",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-leaflet": "^5.0.0",
+    "react-router-dom": "^7.12.0",
+    "recharts": "^3.7.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.21",
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}
