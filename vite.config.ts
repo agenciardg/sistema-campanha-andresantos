@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(() => {
   return {
-    // Base URL - use '/' para desenvolvimento local ou './' para deploy em cPanel
-    base: './',
+    // Base URL absoluta para garantir que assets carreguem corretamente em rotas profundas
+    base: '/',
 
     server: {
       port: 3000,

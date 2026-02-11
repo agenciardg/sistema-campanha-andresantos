@@ -141,8 +141,8 @@ async function verificarEvolutionConectada(): Promise<EvolutionConfig | null> {
  * Lê a URL base da configuração do banco de dados
  */
 export async function gerarLinkCadastroLideranca(codigoUnico: string): Promise<string> {
-  const baseUrl = (await getConfig('links.url_base_cadastro')).replace(/\/+$/, '');
-  return `${baseUrl}/c/${codigoUnico}`;
+  const baseUrl = (await getConfig('links.url_base_cadastro')).replace(/\/+$/, '').replace(/#$/, '');
+  return `${baseUrl}/#/c/${codigoUnico}`;
 }
 
 /**
@@ -150,8 +150,8 @@ export async function gerarLinkCadastroLideranca(codigoUnico: string): Promise<s
  * Lê a URL base da configuração do banco de dados
  */
 export async function gerarLinkCadastroCoordenador(codigoUnico: string): Promise<string> {
-  const baseUrl = (await getConfig('links.url_base_cadastro')).replace(/\/+$/, '');
-  return `${baseUrl}/c/${codigoUnico}`;
+  const baseUrl = (await getConfig('links.url_base_cadastro')).replace(/\/+$/, '').replace(/#$/, '');
+  return `${baseUrl}/#/c/${codigoUnico}`;
 }
 
 /**

@@ -1,9 +1,10 @@
 // Serviço para geração de links e QR Codes para Lideranças e Coordenadores
 
 // Gerar link de cadastro usando a URL base fornecida pelo contexto de configuração
+// Garante que o link use hash routing (/#/c/...) para compatibilidade com HashRouter
 export const gerarLinkCadastro = (baseUrl: string, codigo: string): string => {
-  const url = baseUrl.replace(/\/+$/, '');
-  return `${url}/c/${codigo}`;
+  const url = baseUrl.replace(/\/+$/, '').replace(/#$/, '');
+  return `${url}/#/c/${codigo}`;
 };
 
 // Armazenamento local das configurações
