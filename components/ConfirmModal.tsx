@@ -70,7 +70,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-medium text-white tracking-tight">{title}</h3>
-              <p className="text-sm text-gray-400 mt-2 leading-relaxed">{message}</p>
+              <div className="text-sm text-gray-400 mt-2 leading-relaxed">{message}</div>
             </div>
           </div>
         </div>

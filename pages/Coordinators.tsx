@@ -76,7 +76,7 @@ const Coordinators: React.FC = () => {
         liderancasService.listar(),
         cadastrosService.listar(),
         equipesService.listar(),
-        supabase.from('pltdataandrebueno_equipe_coordenadores').select('equipe_id, coordenador_id'),
+        supabase.from('andresantos_equipe_coordenadores').select('equipe_id, coordenador_id'),
         isNotificationServiceAvailable(),
       ]);
       setCoordenadores(coordData);
@@ -205,7 +205,7 @@ const Coordinators: React.FC = () => {
           equipe_id: equipeId,
           coordenador_id: novoCoordenador.id,
         }));
-        await supabase.from('pltdataandrebueno_equipe_coordenadores').insert(vinculos);
+        await supabase.from('andresantos_equipe_coordenadores').insert(vinculos);
       }
 
       // Coordenador criado com sucesso - fechar modal imediatamente
@@ -331,7 +331,7 @@ const Coordinators: React.FC = () => {
       // Atualizar vínculos de equipes
       // Remover vínculos antigos
       await supabase
-        .from('pltdataandrebueno_equipe_coordenadores')
+        .from('andresantos_equipe_coordenadores')
         .delete()
         .eq('coordenador_id', editingCoordenador.id);
       // Inserir novos vínculos
@@ -340,7 +340,7 @@ const Coordinators: React.FC = () => {
           equipe_id: equipeId,
           coordenador_id: editingCoordenador.id,
         }));
-        await supabase.from('pltdataandrebueno_equipe_coordenadores').insert(vinculos);
+        await supabase.from('andresantos_equipe_coordenadores').insert(vinculos);
       }
 
       await carregarDados();

@@ -11,7 +11,7 @@
     "clean": "rm -rf dist",
     "rebuild": "npm run clean && npm run build",
     "supabase:login": "npx supabase login",
-    "supabase:link": "npx supabase link --project-ref bnyjhvcmasloqunstjoz",
+    "supabase:link": "npx supabase link --project-ref arzoiwlinsswslhokwxk",
     "supabase:deploy:geocoding": "npx supabase functions deploy geocoding-proxy --no-verify-jwt",
     "supabase:deploy:all": "npx supabase functions deploy"
   },

@@ -505,16 +505,20 @@ const LeafletMapComplete: React.FC<LeafletMapCompleteProps> = ({
       .then(data => {
         // Verificar se o mapa ainda existe (componente pode ter desmontado)
         if (!mapInstanceRef.current) return;
-        L.geoJSON(data, {
-          style: {
-            color: '#1e5a8d',
-            weight: 2,
-            fillColor: 'transparent',
-            fillOpacity: 0
-          }
-        }).addTo(map);
+        try {
+          L.geoJSON(data, {
+            style: {
+              color: '#1e5a8d',
+              weight: 2,
+              fillColor: 'transparent',
+              fillOpacity: 0
+            }
+          }).addTo(map);
+        } catch {
+          // Map container may have been removed during fetch - safe to ignore
+        }
       })
-      .catch(err => console.error('Erro ao carregar GeoJSON:', err));
+      .catch(() => { /* GeoJSON fetch failed - non-critical */ });
 
     // Criar layers
     organizacoesLayerRef.current = L.layerGroup().addTo(map);

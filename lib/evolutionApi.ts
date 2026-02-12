@@ -105,7 +105,7 @@ async function callEvolutionProxy(
 export async function getEvolutionConfig(): Promise<EvolutionConfig | null> {
   try {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_evolution_config')
+      .from('andresantos_evolution_config')
       .select('*')
       .order('criado_em', { ascending: false })
       .limit(1)
@@ -133,7 +133,7 @@ export async function saveEvolutionConfig(config: Partial<EvolutionConfig>): Pro
     if (existingConfig?.id) {
       // Atualizar existente
       const { data, error } = await supabase
-        .from('pltdataandrebueno_evolution_config')
+        .from('andresantos_evolution_config')
         .update({
           ...config,
           atualizado_em: new Date().toISOString(),
@@ -147,7 +147,7 @@ export async function saveEvolutionConfig(config: Partial<EvolutionConfig>): Pro
     } else {
       // Criar novo
       const { data, error } = await supabase
-        .from('pltdataandrebueno_evolution_config')
+        .from('andresantos_evolution_config')
         .insert([{
           ...config,
           status: config.status || 'disconnected',

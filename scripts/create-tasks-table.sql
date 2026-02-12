@@ -4,7 +4,7 @@
 -- =============================================
 
 -- Criar tabela de tarefas
-CREATE TABLE IF NOT EXISTS pltdataandrebueno_tarefas (
+CREATE TABLE IF NOT EXISTS andresantos_tarefas (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- Dados da tarefa
@@ -35,20 +35,20 @@ CREATE TABLE IF NOT EXISTS pltdataandrebueno_tarefas (
 );
 
 -- Índices para performance
-CREATE INDEX IF NOT EXISTS idx_tarefas_status ON pltdataandrebueno_tarefas(status);
-CREATE INDEX IF NOT EXISTS idx_tarefas_prioridade ON pltdataandrebueno_tarefas(prioridade);
-CREATE INDEX IF NOT EXISTS idx_tarefas_data_vencimento ON pltdataandrebueno_tarefas(data_vencimento);
-CREATE INDEX IF NOT EXISTS idx_tarefas_ativo ON pltdataandrebueno_tarefas(ativo);
-CREATE INDEX IF NOT EXISTS idx_tarefas_criado_em ON pltdataandrebueno_tarefas(criado_em);
+CREATE INDEX IF NOT EXISTS idx_tarefas_status ON andresantos_tarefas(status);
+CREATE INDEX IF NOT EXISTS idx_tarefas_prioridade ON andresantos_tarefas(prioridade);
+CREATE INDEX IF NOT EXISTS idx_tarefas_data_vencimento ON andresantos_tarefas(data_vencimento);
+CREATE INDEX IF NOT EXISTS idx_tarefas_ativo ON andresantos_tarefas(ativo);
+CREATE INDEX IF NOT EXISTS idx_tarefas_criado_em ON andresantos_tarefas(criado_em);
 
 -- Habilitar RLS (Row Level Security)
-ALTER TABLE pltdataandrebueno_tarefas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE andresantos_tarefas ENABLE ROW LEVEL SECURITY;
 
 -- Política para permitir todas as operações (ajuste conforme necessário)
-CREATE POLICY "Permitir todas operações em tarefas" ON pltdataandrebueno_tarefas
+CREATE POLICY "Permitir todas operações em tarefas" ON andresantos_tarefas
   FOR ALL
   USING (true)
   WITH CHECK (true);
 
 -- Comentário na tabela
-COMMENT ON TABLE pltdataandrebueno_tarefas IS 'Tabela de tarefas e agendamentos do coordenador master';
+COMMENT ON TABLE andresantos_tarefas IS 'Tabela de tarefas e agendamentos do coordenador master';

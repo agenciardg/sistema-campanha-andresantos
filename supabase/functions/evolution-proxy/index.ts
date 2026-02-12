@@ -27,7 +27,7 @@ async function getEvolutionConfigFromDB(): Promise<{ servidor_url: string; api_k
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     const { data, error } = await supabase
-      .from("pltdataandrebueno_evolution_config")
+      .from("andresantos_evolution_config")
       .select("*")
       .order("criado_em", { ascending: false })
       .limit(1)
@@ -237,7 +237,7 @@ Deno.serve(async (req) => {
 
       const adminClient = createClient(supabaseUrl, serviceRoleKey);
       await adminClient
-        .from("pltdataandrebueno_evolution_config")
+        .from("andresantos_evolution_config")
         .update({
           status: newStatus,
           ultimo_check: new Date().toISOString(),
@@ -250,7 +250,7 @@ Deno.serve(async (req) => {
     if ((action === "logout" || action === "delete") && evolutionResponse.ok && config.id) {
       const adminClient = createClient(supabaseUrl, serviceRoleKey);
       await adminClient
-        .from("pltdataandrebueno_evolution_config")
+        .from("andresantos_evolution_config")
         .update({
           status: "disconnected",
           atualizado_em: new Date().toISOString(),

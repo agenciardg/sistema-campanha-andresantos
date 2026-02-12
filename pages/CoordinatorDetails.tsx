@@ -31,7 +31,7 @@ const CoordinatorDetails: React.FC = () => {
       // Buscar dados do coordenador e vínculos com equipes
       const [coordData, ecData] = await Promise.all([
         coordenadoresService.buscarPorId(coordinatorId),
-        supabase.from('pltdataandrebueno_equipe_coordenadores').select('equipe_id, coordenador_id').eq('coordenador_id', coordinatorId),
+        supabase.from('andresantos_equipe_coordenadores').select('equipe_id, coordenador_id').eq('coordenador_id', coordinatorId),
       ]);
       setCoordenador(coordData);
       const vinculos = ecData.data || [];
@@ -41,7 +41,7 @@ const CoordinatorDetails: React.FC = () => {
       const equipeIds = vinculos.map((ec: any) => ec.equipe_id);
       if (equipeIds.length > 0) {
         const { data: equipesData } = await supabase
-          .from('pltdataandrebueno_equipes')
+          .from('andresantos_equipes')
           .select('*')
           .in('id', equipeIds);
         setEquipes(equipesData || []);

@@ -4,7 +4,7 @@
 -- =============================================
 
 -- Criar tabela de configuracao
-CREATE TABLE IF NOT EXISTS pltdataandrebueno_evolution_config (
+CREATE TABLE IF NOT EXISTS andresantos_evolution_config (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- Dados da conexao
@@ -24,16 +24,16 @@ CREATE TABLE IF NOT EXISTS pltdataandrebueno_evolution_config (
 );
 
 -- Indice para busca rapida
-CREATE INDEX IF NOT EXISTS idx_evolution_config_status ON pltdataandrebueno_evolution_config(status);
+CREATE INDEX IF NOT EXISTS idx_evolution_config_status ON andresantos_evolution_config(status);
 
 -- Habilitar RLS
-ALTER TABLE pltdataandrebueno_evolution_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE andresantos_evolution_config ENABLE ROW LEVEL SECURITY;
 
 -- Politica para permitir todas operacoes
-CREATE POLICY "Permitir todas operacoes em evolution_config" ON pltdataandrebueno_evolution_config
+CREATE POLICY "Permitir todas operacoes em evolution_config" ON andresantos_evolution_config
   FOR ALL
   USING (true)
   WITH CHECK (true);
 
 -- Comentario na tabela
-COMMENT ON TABLE pltdataandrebueno_evolution_config IS 'Configuracao da integracao com Evolution API (WhatsApp)';
+COMMENT ON TABLE andresantos_evolution_config IS 'Configuracao da integracao com Evolution API (WhatsApp)';

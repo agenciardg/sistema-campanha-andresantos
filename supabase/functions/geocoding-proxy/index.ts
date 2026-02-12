@@ -43,7 +43,7 @@ async function getGoogleMapsApiKey(): Promise<string | null> {
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     const { data, error } = await supabase
-      .from("pltdataandrebueno_configuracoes")
+      .from("andresantos_configuracoes")
       .select("valor")
       .eq("chave", "api.google_maps_key")
       .single();

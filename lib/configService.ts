@@ -1,7 +1,7 @@
 /**
  * CONFIG SERVICE - Serviço centralizado de configurações do sistema
  *
- * Todas as configurações são armazenadas na tabela pltdataandrebueno_configuracoes
+ * Todas as configurações são armazenadas na tabela andresantos_configuracoes
  * como key-value pairs. Chaves são prefixadas por setor para organização.
  *
  * Setores: branding, links, lgpd, api, whatsapp
@@ -40,12 +40,12 @@ export const SETORES_CONFIG: ConfigSetor[] = [
     icone: 'palette',
     cor: '#8b5cf6',
     campos: [
-      { chave: 'branding.app_nome', label: 'Nome do App', descricao: 'Nome exibido na sidebar e cabeçalhos', tipo: 'text', padrao: 'POLITICA' },
-      { chave: 'branding.app_subtitulo', label: 'Subtítulo do App', descricao: 'Texto abaixo do nome na sidebar', tipo: 'text', padrao: 'DATA' },
-      { chave: 'branding.candidato_nome', label: 'Nome do Candidato', descricao: 'Nome do candidato/político', tipo: 'text', padrao: 'Renata Sene' },
-      { chave: 'branding.login_titulo', label: 'Título do Login', descricao: 'Título na tela de login', tipo: 'text', padrao: 'PoliticaData' },
+      { chave: 'branding.app_nome', label: 'Nome do App', descricao: 'Nome exibido na sidebar e cabeçalhos', tipo: 'text', padrao: 'ANDRE' },
+      { chave: 'branding.app_subtitulo', label: 'Subtítulo do App', descricao: 'Texto abaixo do nome na sidebar', tipo: 'text', padrao: 'SANTOS' },
+      { chave: 'branding.candidato_nome', label: 'Nome do Candidato', descricao: 'Nome do candidato/político', tipo: 'text', padrao: 'André Santos' },
+      { chave: 'branding.login_titulo', label: 'Título do Login', descricao: 'Título na tela de login', tipo: 'text', padrao: 'André Santos' },
       { chave: 'branding.login_subtitulo', label: 'Subtítulo do Login', descricao: 'Texto abaixo do título na tela de login', tipo: 'text', padrao: 'Acesso seguro para coordenadores e equipe' },
-      { chave: 'branding.rodape_texto', label: 'Texto do Rodapé', descricao: 'Texto exibido no rodapé do login', tipo: 'text', padrao: 'PoliticaData System' },
+      { chave: 'branding.rodape_texto', label: 'Texto do Rodapé', descricao: 'Texto exibido no rodapé do login', tipo: 'text', padrao: 'André Santos - Sistema de Campanha' },
       { chave: 'branding.cor_primaria', label: 'Cor Primária', descricao: 'Cor principal do tema (hex)', tipo: 'color', padrao: '#1e5a8d' },
     ],
   },
@@ -56,7 +56,7 @@ export const SETORES_CONFIG: ConfigSetor[] = [
     icone: 'link',
     cor: '#3b82f6',
     campos: [
-      { chave: 'links.url_base_cadastro', label: 'URL Base de Cadastro', descricao: 'Domínio base para links de cadastro de apoiadores', tipo: 'url', padrao: 'https://apoiadores.renatasene.com.br/#' },
+      { chave: 'links.url_base_cadastro', label: 'URL Base de Cadastro', descricao: 'Domínio base para links de cadastro de apoiadores', tipo: 'url', padrao: 'https://apoiadores.andresantosoficial.com.br/#' },
     ],
   },
   {

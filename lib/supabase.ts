@@ -185,7 +185,7 @@ export const coordenadoresMasterService = {
     const end = start + safePageSize - 1;
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_coordenadores_master')
+      .from('andresantos_coordenadores_master')
       .select('*')
       .order('criado_em', { ascending: false })
       .range(start, end);
@@ -202,7 +202,7 @@ export const coordenadoresMasterService = {
     logger.warn('coordenadoresMasterService.listarTodos() chamado - pode ser lento');
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_coordenadores_master')
+      .from('andresantos_coordenadores_master')
       .select('*')
       .order('criado_em', { ascending: false });
 
@@ -216,7 +216,7 @@ export const coordenadoresMasterService = {
   // Buscar por ID
   async buscarPorId(id: string): Promise<CoordinatorMaster | null> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_coordenadores_master')
+      .from('andresantos_coordenadores_master')
       .select('*')
       .eq('id', id)
       .single();
@@ -228,7 +228,7 @@ export const coordenadoresMasterService = {
   // Buscar por email (para login)
   async buscarPorEmail(email: string): Promise<CoordinatorMaster | null> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_coordenadores_master')
+      .from('andresantos_coordenadores_master')
       .select('*')
       .eq('email', email)
       .single();
@@ -240,7 +240,7 @@ export const coordenadoresMasterService = {
   // Criar novo
   async criar(dados: Omit<CoordinatorMaster, 'id' | 'criado_em' | 'atualizado_em' | 'ultimo_acesso'>): Promise<CoordinatorMaster> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_coordenadores_master')
+      .from('andresantos_coordenadores_master')
       .insert([{
         ...dados,
         ativo: dados.ativo ?? true,
@@ -255,7 +255,7 @@ export const coordenadoresMasterService = {
   // Atualizar
   async atualizar(id: string, dados: Partial<CoordinatorMaster>): Promise<CoordinatorMaster> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_coordenadores_master')
+      .from('andresantos_coordenadores_master')
       .update({
         ...dados,
         atualizado_em: new Date().toISOString(),
@@ -271,7 +271,7 @@ export const coordenadoresMasterService = {
   // Excluir
   async excluir(id: string): Promise<void> {
     const { error } = await supabase
-      .from('pltdataandrebueno_coordenadores_master')
+      .from('andresantos_coordenadores_master')
       .delete()
       .eq('id', id);
 
@@ -281,7 +281,7 @@ export const coordenadoresMasterService = {
   // Atualizar último acesso
   async atualizarUltimoAcesso(id: string): Promise<void> {
     const { error } = await supabase
-      .from('pltdataandrebueno_coordenadores_master')
+      .from('andresantos_coordenadores_master')
       .update({ ultimo_acesso: new Date().toISOString() })
       .eq('id', id);
 
@@ -291,7 +291,7 @@ export const coordenadoresMasterService = {
   // Toggle ativo
   async toggleAtivo(id: string, ativo: boolean): Promise<void> {
     const { error } = await supabase
-      .from('pltdataandrebueno_coordenadores_master')
+      .from('andresantos_coordenadores_master')
       .update({
         ativo,
         atualizado_em: new Date().toISOString(),
@@ -310,7 +310,7 @@ export const organizacoesService = {
     const end = start + safePageSize - 1;
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_organizacoes')
+      .from('andresantos_organizacoes')
       .select('*')
       .order('criado_em', { ascending: false })
       .range(start, end);
@@ -324,7 +324,7 @@ export const organizacoesService = {
 
   async listarTodos(): Promise<Organizacao[]> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_organizacoes')
+      .from('andresantos_organizacoes')
       .select('*')
       .order('criado_em', { ascending: false });
     if (error) throw error;
@@ -333,7 +333,7 @@ export const organizacoesService = {
 
   async buscarPorId(id: string): Promise<Organizacao | null> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_organizacoes')
+      .from('andresantos_organizacoes')
       .select('*')
       .eq('id', id)
       .single();
@@ -343,7 +343,7 @@ export const organizacoesService = {
 
   async criar(dados: Omit<Organizacao, 'id' | 'criado_em' | 'atualizado_em'>): Promise<Organizacao> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_organizacoes')
+      .from('andresantos_organizacoes')
       .insert([dados])
       .select()
       .single();
@@ -353,7 +353,7 @@ export const organizacoesService = {
 
   async atualizar(id: string, dados: Partial<Organizacao>): Promise<Organizacao> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_organizacoes')
+      .from('andresantos_organizacoes')
       .update({ ...dados, atualizado_em: new Date().toISOString() })
       .eq('id', id)
       .select()
@@ -364,7 +364,7 @@ export const organizacoesService = {
 
   async excluir(id: string): Promise<void> {
     const { error } = await supabase
-      .from('pltdataandrebueno_organizacoes')
+      .from('andresantos_organizacoes')
       .delete()
       .eq('id', id);
     if (error) throw error;
@@ -379,7 +379,7 @@ export const equipesService = {
     const end = start + safePageSize - 1;
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_equipes')
+      .from('andresantos_equipes')
       .select('*')
       .order('criado_em', { ascending: false })
       .range(start, end);
@@ -393,7 +393,7 @@ export const equipesService = {
 
   async listarTodos(): Promise<Equipe[]> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_equipes')
+      .from('andresantos_equipes')
       .select('*')
       .order('criado_em', { ascending: false });
     if (error) throw error;
@@ -402,7 +402,7 @@ export const equipesService = {
 
   async buscarPorId(id: string): Promise<Equipe | null> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_equipes')
+      .from('andresantos_equipes')
       .select('*')
       .eq('id', id)
       .single();
@@ -412,7 +412,7 @@ export const equipesService = {
 
   async criar(dados: Omit<Equipe, 'id' | 'criado_em' | 'atualizado_em'>): Promise<Equipe> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_equipes')
+      .from('andresantos_equipes')
       .insert([dados])
       .select()
       .single();
@@ -422,7 +422,7 @@ export const equipesService = {
 
   async atualizar(id: string, dados: Partial<Equipe>): Promise<Equipe> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_equipes')
+      .from('andresantos_equipes')
       .update({ ...dados, atualizado_em: new Date().toISOString() })
       .eq('id', id)
       .select()
@@ -434,25 +434,25 @@ export const equipesService = {
   async verificarDependencias(id: string): Promise<{ liderancas: number; coordenadores: number; cadastros: number }> {
     // Contar lideranças vinculadas
     const { count: liderancasCount } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .select('*', { count: 'exact', head: true })
       .eq('equipe_id', id);
 
     // Contar coordenadores vinculados (via junction table)
     const { count: coordenadoresCount } = await supabase
-      .from('pltdataandrebueno_equipe_coordenadores')
+      .from('andresantos_equipe_coordenadores')
       .select('*', { count: 'exact', head: true })
       .eq('equipe_id', id);
 
     // Contar cadastros vinculados via lideranças desta equipe
     const { data: liderancaIds } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .select('id')
       .eq('equipe_id', id);
     let cadastrosCount = 0;
     if (liderancaIds && liderancaIds.length > 0) {
       const { count } = await supabase
-        .from('pltdataandrebueno_cadastros')
+        .from('andresantos_cadastros')
         .select('*', { count: 'exact', head: true })
         .in('lideranca_id', liderancaIds.map(l => l.id));
       cadastrosCount = count || 0;
@@ -468,7 +468,7 @@ export const equipesService = {
   async excluir(id: string): Promise<void> {
     // 1. Desvincular lideranças da equipe (set equipe_id = null)
     const { error: unlinkError } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .update({ equipe_id: null, atualizado_em: new Date().toISOString() })
       .eq('equipe_id', id);
     if (unlinkError) throw unlinkError;
@@ -476,7 +476,7 @@ export const equipesService = {
     // 2. equipe_coordenadores tem CASCADE DELETE, então é auto-removido
     // 3. Deletar a equipe
     const { error } = await supabase
-      .from('pltdataandrebueno_equipes')
+      .from('andresantos_equipes')
       .delete()
       .eq('id', id);
     if (error) throw error;
@@ -484,7 +484,7 @@ export const equipesService = {
 
   async contarLiderancas(equipeId: string): Promise<number> {
     const { count, error } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .select('*', { count: 'exact', head: true })
       .eq('equipe_id', equipeId);
     if (error) throw error;
@@ -493,7 +493,7 @@ export const equipesService = {
 
   async contarCadastros(equipeId: string): Promise<number> {
     const { data: liderancas } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .select('id')
       .eq('equipe_id', equipeId);
 
@@ -501,7 +501,7 @@ export const equipesService = {
 
     const liderancaIds = liderancas.map(l => l.id);
     const { count, error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .select('*', { count: 'exact', head: true })
       .in('lideranca_id', liderancaIds);
     if (error) throw error;
@@ -517,7 +517,7 @@ export const coordenadoresService = {
     const end = start + safePageSize - 1;
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_coordenadores')
+      .from('andresantos_coordenadores')
       .select('*')
       .order('criado_em', { ascending: false })
       .range(start, end);
@@ -531,7 +531,7 @@ export const coordenadoresService = {
 
   async listarTodos(): Promise<Coordenador[]> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_coordenadores')
+      .from('andresantos_coordenadores')
       .select('*')
       .order('criado_em', { ascending: false });
     if (error) throw error;
@@ -540,7 +540,7 @@ export const coordenadoresService = {
 
   async buscarPorId(id: string): Promise<Coordenador | null> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_coordenadores')
+      .from('andresantos_coordenadores')
       .select('*')
       .eq('id', id)
       .single();
@@ -550,7 +550,7 @@ export const coordenadoresService = {
 
   async buscarPorCodigo(codigo: string): Promise<Coordenador | null> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_coordenadores')
+      .from('andresantos_coordenadores')
       .select('*')
       .eq('codigo_unico', codigo)
       .maybeSingle();
@@ -560,7 +560,7 @@ export const coordenadoresService = {
 
   async criar(dados: Omit<Coordenador, 'id' | 'criado_em' | 'atualizado_em'>): Promise<Coordenador> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_coordenadores')
+      .from('andresantos_coordenadores')
       .insert([dados])
       .select()
       .single();
@@ -573,7 +573,7 @@ export const coordenadoresService = {
     const { codigo_unico, id: _id, criado_em, ...dadosSeguros } = dados as any;
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_coordenadores')
+      .from('andresantos_coordenadores')
       .update({ ...dadosSeguros, atualizado_em: new Date().toISOString() })
       .eq('id', id)
       .select()
@@ -585,13 +585,13 @@ export const coordenadoresService = {
   async verificarDependencias(id: string): Promise<{ cadastros: number; equipes: number }> {
     // Contar cadastros vinculados diretamente ao coordenador
     const { count: cadastrosCount } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .select('*', { count: 'exact', head: true })
       .eq('coordenador_id', id);
 
     // Contar equipes vinculadas (via junction table)
     const { count: equipesCount } = await supabase
-      .from('pltdataandrebueno_equipe_coordenadores')
+      .from('andresantos_equipe_coordenadores')
       .select('*', { count: 'exact', head: true })
       .eq('coordenador_id', id);
 
@@ -604,7 +604,7 @@ export const coordenadoresService = {
   async excluir(id: string): Promise<void> {
     // Desvincular cadastros do coordenador antes de excluir (FK com NO ACTION)
     const { error: unlinkError } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .update({ coordenador_id: null })
       .eq('coordenador_id', id);
     if (unlinkError) throw unlinkError;
@@ -612,7 +612,7 @@ export const coordenadoresService = {
     // equipe_coordenadores tem CASCADE DELETE, então é auto-removido
 
     const { error } = await supabase
-      .from('pltdataandrebueno_coordenadores')
+      .from('andresantos_coordenadores')
       .delete()
       .eq('id', id);
     if (error) throw error;
@@ -627,7 +627,7 @@ export const liderancasService = {
     const end = start + safePageSize - 1;
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .select('*')
       .order('criado_em', { ascending: false })
       .range(start, end);
@@ -641,7 +641,7 @@ export const liderancasService = {
 
   async listarTodos(): Promise<Lideranca[]> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .select('*')
       .order('criado_em', { ascending: false });
     if (error) throw error;
@@ -650,7 +650,7 @@ export const liderancasService = {
 
   async listarTodosPorEquipe(equipeId: string): Promise<Lideranca[]> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .select('*')
       .eq('equipe_id', equipeId)
       .order('criado_em', { ascending: false });
@@ -664,7 +664,7 @@ export const liderancasService = {
     const end = start + safePageSize - 1;
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .select('*')
       .eq('equipe_id', equipeId)
       .order('criado_em', { ascending: false })
@@ -679,7 +679,7 @@ export const liderancasService = {
 
   async buscarPorId(id: string): Promise<Lideranca | null> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .select('*')
       .eq('id', id)
       .single();
@@ -689,7 +689,7 @@ export const liderancasService = {
 
   async buscarPorCodigo(codigo: string): Promise<Lideranca | null> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .select('*')
       .eq('codigo_unico', codigo)
       .maybeSingle();
@@ -699,7 +699,7 @@ export const liderancasService = {
 
   async criar(dados: Omit<Lideranca, 'id' | 'criado_em' | 'atualizado_em'>): Promise<Lideranca> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .insert([dados])
       .select()
       .single();
@@ -712,7 +712,7 @@ export const liderancasService = {
     const { codigo_unico, id: _id, criado_em, ...dadosSeguros } = dados as any;
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .update({ ...dadosSeguros, atualizado_em: new Date().toISOString() })
       .eq('id', id)
       .select()
@@ -723,7 +723,7 @@ export const liderancasService = {
 
   async verificarDependencias(id: string): Promise<{ cadastros: number }> {
     const { count: cadastrosCount } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .select('*', { count: 'exact', head: true })
       .eq('lideranca_id', id);
 
@@ -733,13 +733,13 @@ export const liderancasService = {
   async excluir(id: string): Promise<void> {
     // Desvincular cadastros da liderança antes de excluir (FK com NO ACTION)
     const { error: unlinkError } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .update({ lideranca_id: null })
       .eq('lideranca_id', id);
     if (unlinkError) throw unlinkError;
 
     const { error } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .delete()
       .eq('id', id);
     if (error) throw error;
@@ -747,7 +747,7 @@ export const liderancasService = {
 
   async contarCadastros(liderancaId: string): Promise<number> {
     const { count, error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .select('*', { count: 'exact', head: true })
       .eq('lideranca_id', liderancaId);
     if (error) throw error;
@@ -763,7 +763,7 @@ export const cadastrosService = {
     const end = start + safePageSize - 1;
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .select('*')
       .order('criado_em', { ascending: false })
       .range(start, end);
@@ -779,7 +779,7 @@ export const cadastrosService = {
     logger.warn('cadastrosService.listarTodos() chamado - pode ser muito lento com muitos cadastros');
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .select('*')
       .order('criado_em', { ascending: false });
 
@@ -792,7 +792,7 @@ export const cadastrosService = {
 
   async listarDesde(dataInicial: string): Promise<Cadastro[]> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .select('*')
       .gte('criado_em', dataInicial)
       .order('criado_em', { ascending: false });
@@ -802,13 +802,13 @@ export const cadastrosService = {
 
   async listarPorEquipe(equipeId: string): Promise<Cadastro[]> {
     const { data: liderancas } = await supabase
-      .from('pltdataandrebueno_liderancas')
+      .from('andresantos_liderancas')
       .select('id')
       .eq('equipe_id', equipeId);
     if (!liderancas || liderancas.length === 0) return [];
     const ids = liderancas.map(l => l.id);
     const { data, error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .select('*')
       .in('lideranca_id', ids)
       .order('criado_em', { ascending: false });
@@ -818,7 +818,7 @@ export const cadastrosService = {
 
   async listarPorCoordenador(coordenadorId: string): Promise<Cadastro[]> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .select('*')
       .eq('coordenador_id', coordenadorId)
       .order('criado_em', { ascending: false });
@@ -832,7 +832,7 @@ export const cadastrosService = {
     const end = start + safePageSize - 1;
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .select('*')
       .eq('lideranca_id', liderancaId)
       .order('criado_em', { ascending: false })
@@ -847,7 +847,7 @@ export const cadastrosService = {
 
   async buscarPorId(id: string): Promise<Cadastro | null> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .select('*')
       .eq('id', id)
       .single();
@@ -857,7 +857,7 @@ export const cadastrosService = {
 
   async criar(dados: Omit<Cadastro, 'id' | 'criado_em'>): Promise<Cadastro> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .insert([dados])
       .select()
       .single();
@@ -881,14 +881,14 @@ export const cadastrosService = {
   /** Insert sem .select() — para uso público (anon) que não tem permissão SELECT */
   async criarPublico(dados: Omit<Cadastro, 'id' | 'criado_em'>): Promise<void> {
     const { error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .insert([dados] as any);
     if (error) throw error;
   },
 
   async atualizar(id: string, dados: Partial<Cadastro>): Promise<Cadastro> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .update(dados)
       .eq('id', id)
       .select()
@@ -899,7 +899,7 @@ export const cadastrosService = {
 
   async excluir(id: string): Promise<void> {
     const { error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .delete()
       .eq('id', id);
     if (error) throw error;
@@ -907,7 +907,7 @@ export const cadastrosService = {
 
   async contar(): Promise<number> {
     const { count, error } = await supabase
-      .from('pltdataandrebueno_cadastros')
+      .from('andresantos_cadastros')
       .select('*', { count: 'exact', head: true });
     if (error) throw error;
     return count || 0;
@@ -918,7 +918,7 @@ export const cadastrosService = {
 export const configuracoesService = {
   async buscar(chave: string): Promise<string | null> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_configuracoes')
+      .from('andresantos_configuracoes')
       .select('valor')
       .eq('chave', chave)
       .maybeSingle();
@@ -928,7 +928,7 @@ export const configuracoesService = {
 
   async salvar(chave: string, valor: string): Promise<void> {
     const { error } = await supabase
-      .from('pltdataandrebueno_configuracoes')
+      .from('andresantos_configuracoes')
       .upsert({
         chave,
         valor,
@@ -943,7 +943,7 @@ export const configuracoesService = {
     if (!configuracoes || configuracoes.length === 0) return;
 
     const { error } = await supabase
-      .from('pltdataandrebueno_configuracoes')
+      .from('andresantos_configuracoes')
       .upsert(
         configuracoes.map(c => ({
           ...c,
@@ -957,7 +957,7 @@ export const configuracoesService = {
 
   async listarTodas(): Promise<{ chave: string, valor: string }[]> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_configuracoes')
+      .from('andresantos_configuracoes')
       .select('chave, valor');
     if (error) throw error;
     return data || [];
@@ -991,7 +991,7 @@ export interface Responsavel {
 export const responsaveisService = {
   async listarTodos(): Promise<Responsavel[]> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_responsaveis')
+      .from('andresantos_responsaveis')
       .select('*')
       .eq('ativo', true)
       .order('nome');
@@ -1001,7 +1001,7 @@ export const responsaveisService = {
 
   async buscarPorId(id: string): Promise<Responsavel | null> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_responsaveis')
+      .from('andresantos_responsaveis')
       .select('*')
       .eq('id', id)
       .single();
@@ -1011,7 +1011,7 @@ export const responsaveisService = {
 
   async criar(dados: Omit<Responsavel, 'id' | 'criado_em' | 'atualizado_em'>): Promise<Responsavel> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_responsaveis')
+      .from('andresantos_responsaveis')
       .insert([dados])
       .select()
       .single();
@@ -1021,7 +1021,7 @@ export const responsaveisService = {
 
   async atualizar(id: string, dados: Partial<Responsavel>): Promise<Responsavel> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_responsaveis')
+      .from('andresantos_responsaveis')
       .update({ ...dados, atualizado_em: new Date().toISOString() })
       .eq('id', id)
       .select()
@@ -1032,7 +1032,7 @@ export const responsaveisService = {
 
   async excluir(id: string): Promise<void> {
     const { error } = await supabase
-      .from('pltdataandrebueno_responsaveis')
+      .from('andresantos_responsaveis')
       .update({ ativo: false, atualizado_em: new Date().toISOString() })
       .eq('id', id);
     if (error) throw error;
@@ -1079,7 +1079,7 @@ export const tarefasService = {
     const end = start + safePageSize - 1;
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_tarefas')
+      .from('andresantos_tarefas')
       .select('*')
       .eq('ativo', true)
       .order('data_vencimento', { ascending: true, nullsFirst: false })
@@ -1094,7 +1094,7 @@ export const tarefasService = {
 
   async listarTodos(): Promise<Tarefa[]> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_tarefas')
+      .from('andresantos_tarefas')
       .select('*')
       .eq('ativo', true)
       .order('data_vencimento', { ascending: true, nullsFirst: false });
@@ -1104,7 +1104,7 @@ export const tarefasService = {
 
   async buscarPorId(id: string): Promise<Tarefa | null> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_tarefas')
+      .from('andresantos_tarefas')
       .select('*')
       .eq('id', id)
       .single();
@@ -1114,7 +1114,7 @@ export const tarefasService = {
 
   async criar(dados: Omit<Tarefa, 'id' | 'criado_em' | 'atualizado_em'>): Promise<Tarefa> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_tarefas')
+      .from('andresantos_tarefas')
       .insert([dados])
       .select()
       .single();
@@ -1124,7 +1124,7 @@ export const tarefasService = {
 
   async atualizar(id: string, dados: Partial<Tarefa>): Promise<Tarefa> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_tarefas')
+      .from('andresantos_tarefas')
       .update({ ...dados, atualizado_em: new Date().toISOString() })
       .eq('id', id)
       .select()
@@ -1142,7 +1142,7 @@ export const tarefasService = {
       updateData.data_conclusao = new Date().toISOString();
     }
     const { data, error } = await supabase
-      .from('pltdataandrebueno_tarefas')
+      .from('andresantos_tarefas')
       .update(updateData)
       .eq('id', id)
       .select()
@@ -1153,7 +1153,7 @@ export const tarefasService = {
 
   async excluir(id: string): Promise<void> {
     const { error } = await supabase
-      .from('pltdataandrebueno_tarefas')
+      .from('andresantos_tarefas')
       .update({ ativo: false, atualizado_em: new Date().toISOString() })
       .eq('id', id);
     if (error) throw error;
@@ -1161,7 +1161,7 @@ export const tarefasService = {
 
   async contarPorStatus(): Promise<Record<TarefaStatus, number>> {
     const { data, error } = await supabase
-      .from('pltdataandrebueno_tarefas')
+      .from('andresantos_tarefas')
       .select('status')
       .eq('ativo', true);
     if (error) throw error;
@@ -1181,7 +1181,7 @@ export const tarefasService = {
   async listarAtrasadas(): Promise<Tarefa[]> {
     const now = new Date().toISOString();
     const { data, error } = await supabase
-      .from('pltdataandrebueno_tarefas')
+      .from('andresantos_tarefas')
       .select('*')
       .eq('ativo', true)
       .in('status', ['pendente', 'em_progresso'])
@@ -1197,7 +1197,7 @@ export const tarefasService = {
     const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59).toISOString();
 
     const { data, error } = await supabase
-      .from('pltdataandrebueno_tarefas')
+      .from('andresantos_tarefas')
       .select('*')
       .eq('ativo', true)
       .in('status', ['pendente', 'em_progresso'])

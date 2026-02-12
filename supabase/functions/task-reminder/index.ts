@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
     const daqui35min = new Date(agora.getTime() + 35 * 60 * 1000);
 
     const { data: tarefas, error: tarefasError } = await supabase
-      .from("pltdataandrebueno_tarefas")
+      .from("andresantos_tarefas")
       .select("*")
       .eq("ativo", true)
       .in("status", ["pendente", "em_progresso"])
@@ -109,7 +109,7 @@ Deno.serve(async (req) => {
 
     // ========== 2. Buscar config da Evolution API ==========
     const { data: evolutionConfig, error: configError } = await supabase
-      .from("pltdataandrebueno_evolution_config")
+      .from("andresantos_evolution_config")
       .select("*")
       .order("criado_em", { ascending: false })
       .limit(1)
@@ -133,7 +133,7 @@ Deno.serve(async (req) => {
 
     // ========== 3. Buscar template de mensagem ==========
     const { data: templateConfig } = await supabase
-      .from("pltdataandrebueno_configuracoes")
+      .from("andresantos_configuracoes")
       .select("valor")
       .eq("chave", "whatsapp.msg_lembrete_tarefa")
       .single();
@@ -155,7 +155,7 @@ Deno.serve(async (req) => {
 
         if (tarefa.responsavel_id) {
           const { data: resp } = await supabase
-            .from("pltdataandrebueno_responsaveis")
+            .from("andresantos_responsaveis")
             .select("nome, telefone")
             .eq("id", tarefa.responsavel_id)
             .single();
@@ -167,7 +167,7 @@ Deno.serve(async (req) => {
 
         if (!telefoneResponsavel && tarefa.coordenador_id) {
           const { data: coord } = await supabase
-            .from("pltdataandrebueno_coordenadores")
+            .from("andresantos_coordenadores")
             .select("nome, telefone")
             .eq("id", tarefa.coordenador_id)
             .single();
@@ -179,7 +179,7 @@ Deno.serve(async (req) => {
 
         if (!telefoneResponsavel && tarefa.lideranca_id) {
           const { data: lid } = await supabase
-            .from("pltdataandrebueno_liderancas")
+            .from("andresantos_liderancas")
             .select("nome, telefone")
             .eq("id", tarefa.lideranca_id)
             .single();
@@ -193,7 +193,7 @@ Deno.serve(async (req) => {
           console.warn(`[Task Reminder] Tarefa ${tarefa.id} - sem telefone do responsável`);
           // Marca data_lembrete mesmo assim para não tentar de novo
           await supabase
-            .from("pltdataandrebueno_tarefas")
+            .from("andresantos_tarefas")
             .update({ data_lembrete: new Date().toISOString() })
             .eq("id", tarefa.id);
           resultados.push({ tarefa_id: tarefa.id, sucesso: false, erro: "Sem telefone" });
@@ -239,7 +239,7 @@ Deno.serve(async (req) => {
 
         // Marcar lembrete como enviado
         await supabase
-          .from("pltdataandrebueno_tarefas")
+          .from("andresantos_tarefas")
           .update({ data_lembrete: new Date().toISOString() })
           .eq("id", tarefa.id);
 
