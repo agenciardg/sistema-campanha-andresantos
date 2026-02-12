@@ -61,6 +61,7 @@ const Coordinators: React.FC = () => {
   });
   const [loadingCep, setLoadingCep] = useState(false);
   const [selectedEquipeIds, setSelectedEquipeIds] = useState<string[]>([]);
+  const [editSelectedEquipeIds, setEditSelectedEquipeIds] = useState<string[]>([]);
 
   useEffect(() => {
     carregarDados();
@@ -248,9 +249,19 @@ const Coordinators: React.FC = () => {
   const abrirModalEditar = (e: React.MouseEvent, coordenador: Coordenador) => {
     e.stopPropagation();
     setEditingCoordenador(coordenador);
+    // Carregar equipes vinculadas ao coordenador
+    const equipeIdsVinculadas = equipeCoordenadores
+      .filter(ec => ec.coordenador_id === coordenador.id)
+      .map(ec => ec.equipe_id)
+      .filter(id => equipes.some(eq => eq.id === id)); // só equipes que ainda existem
+    setEditSelectedEquipeIds(equipeIdsVinculadas);
+    const nomesEquipes = equipeIdsVinculadas
+      .map(id => equipes.find(eq => eq.id === id)?.nome)
+      .filter(Boolean)
+      .join(', ');
     setFormData({
       name: coordenador.nome,
-      region: coordenador.regiao || '',
+      region: nomesEquipes || coordenador.regiao || '',
       phone: coordenador.telefone || '',
       email: coordenador.email || '',
       birthdate: (coordenador as any).data_nascimento || '',
@@ -317,11 +328,27 @@ const Coordinators: React.FC = () => {
         meta: parseInt(formData.goal) || 1000,
       });
 
+      // Atualizar vínculos de equipes
+      // Remover vínculos antigos
+      await supabase
+        .from('pltdataandrebueno_equipe_coordenadores')
+        .delete()
+        .eq('coordenador_id', editingCoordenador.id);
+      // Inserir novos vínculos
+      if (editSelectedEquipeIds.length > 0) {
+        const vinculos = editSelectedEquipeIds.map(equipeId => ({
+          equipe_id: equipeId,
+          coordenador_id: editingCoordenador.id,
+        }));
+        await supabase.from('pltdataandrebueno_equipe_coordenadores').insert(vinculos);
+      }
+
       await carregarDados();
       setShowEditModal(false);
       setEditingCoordenador(null);
+      setEditSelectedEquipeIds([]);
       setFormData({ name: '', region: '', phone: '', email: '', birthdate: '', goal: '', organization: '', cep: '', street: '', number: '', neighborhood: '', city: '' });
-      alert('✅ Coordenador atualizado com sucesso!');
+      setToast({ message: `Coordenador "${formData.name}" atualizado com sucesso!`, type: 'success' });
     } catch (error) {
       console.error('Erro ao atualizar coordenador:', error);
       alert('Erro ao atualizar coordenador. Tente novamente.');
@@ -529,7 +556,9 @@ const Coordinators: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-xs text-gray-400">{coord.regiao || '-'}</span>
+                        <span className="text-xs text-gray-400">
+                          {equipesDoCoord.map(eqId => equipes.find(eq => eq.id === eqId)?.nome).filter(Boolean).join(', ') || coord.regiao || '-'}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium dark:text-white light:text-gray-900">{totalLiderancas}</div>
@@ -917,7 +946,7 @@ const Coordinators: React.FC = () => {
       {showEditModal && editingCoordenador && (
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => { setShowEditModal(false); setEditingCoordenador(null); }}
+          onClick={() => { setShowEditModal(false); setEditingCoordenador(null); setEditSelectedEquipeIds([]); }}
         >
           <div
             className="bg-white dark:bg-[#1a2632] rounded-2xl border border-gray-200 dark:border-white/10 max-w-md w-full shadow-2xl"
@@ -929,7 +958,7 @@ const Coordinators: React.FC = () => {
                 <p className="text-xs text-white/70 mt-1">Atualize os dados do coordenador</p>
               </div>
               <button
-                onClick={() => { setShowEditModal(false); setEditingCoordenador(null); }}
+                onClick={() => { setShowEditModal(false); setEditingCoordenador(null); setEditSelectedEquipeIds([]); }}
                 className="text-white/70 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg"
               >
                 <Icon name="close" className="text-[20px]" />
@@ -956,19 +985,52 @@ const Coordinators: React.FC = () => {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-[#1e3a5f] dark:text-gray-400 uppercase tracking-wider">
-                    Região <span className="text-red-500">*</span>
+                    Equipe(s)
                   </label>
                   <div className="relative">
-                    <Icon name="map" className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1e5a8d] dark:text-gray-500 text-[18px]" />
-                    <input
-                      type="text"
-                      required
-                      value={formData.region}
-                      onChange={(e) => setFormData({ ...formData, region: e.target.value })}
-                      placeholder="Ex: Zona Sul"
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                    />
+                    <Icon name="group" className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1e5a8d] dark:text-gray-500 text-[18px]" />
+                    <select
+                      value=""
+                      onChange={(e) => {
+                        const equipeId = e.target.value;
+                        if (equipeId && !editSelectedEquipeIds.includes(equipeId)) {
+                          const newIds = [...editSelectedEquipeIds, equipeId];
+                          setEditSelectedEquipeIds(newIds);
+                          const nomes = newIds.map(id => equipes.find(eq => eq.id === id)?.nome).filter(Boolean).join(', ');
+                          setFormData({ ...formData, region: nomes });
+                        }
+                      }}
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer appearance-none"
+                    >
+                      <option value="" className="bg-white dark:bg-[#1a1f2e] text-gray-400">Selecione equipe(s)</option>
+                      {equipes.filter(eq => !editSelectedEquipeIds.includes(eq.id)).map((equipe: Equipe) => (
+                        <option key={equipe.id} value={equipe.id} className="bg-white dark:bg-[#1a1f2e] text-gray-900 dark:text-white">
+                          {equipe.nome}
+                        </option>
+                      ))}
+                    </select>
+                    <Icon name="expand_more" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-[18px]" />
                   </div>
+                  {editSelectedEquipeIds.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {editSelectedEquipeIds.map(id => {
+                        const equipe = equipes.find(eq => eq.id === id);
+                        return (
+                          <span key={id} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white" style={{ backgroundColor: equipe?.cor || '#1e3a5f' }}>
+                            {equipe?.nome || 'Equipe removida'}
+                            <button type="button" onClick={() => {
+                              const newIds = editSelectedEquipeIds.filter(eid => eid !== id);
+                              setEditSelectedEquipeIds(newIds);
+                              const nomes = newIds.map(eid => equipes.find(eq => eq.id === eid)?.nome).filter(Boolean).join(', ');
+                              setFormData({ ...formData, region: nomes });
+                            }} className="hover:text-red-200 transition-colors">
+                              <Icon name="close" className="text-[14px]" />
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -1102,6 +1164,7 @@ const Coordinators: React.FC = () => {
                     onClick={() => {
                       setShowEditModal(false);
                       setEditingCoordenador(null);
+                      setEditSelectedEquipeIds([]);
                       setFormData({ name: '', region: '', phone: '', email: '', birthdate: '', goal: '', organization: '', cep: '', street: '', number: '', neighborhood: '', city: '' });
                     }}
                     className="flex-1 px-5 py-3 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/10 transition-all font-medium"

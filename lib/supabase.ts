@@ -466,15 +466,15 @@ export const equipesService = {
   },
 
   async excluir(id: string): Promise<void> {
-    // Desvincular lideranças da equipe antes de excluir (FK com NO ACTION)
+    // 1. Desvincular lideranças da equipe (set equipe_id = null)
     const { error: unlinkError } = await supabase
       .from('pltdataandrebueno_liderancas')
       .update({ equipe_id: null, atualizado_em: new Date().toISOString() })
       .eq('equipe_id', id);
     if (unlinkError) throw unlinkError;
 
-    // equipe_coordenadores tem CASCADE DELETE, então é auto-removido
-
+    // 2. equipe_coordenadores tem CASCADE DELETE, então é auto-removido
+    // 3. Deletar a equipe
     const { error } = await supabase
       .from('pltdataandrebueno_equipes')
       .delete()

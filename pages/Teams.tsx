@@ -686,7 +686,7 @@ const Teams: React.FC = () => {
                   {deleteImpact.cadastros > 0 && (
                     <li className="flex items-center gap-1.5">
                       <Icon name="person" className="text-[14px] text-purple-400" />
-                      <strong>{deleteImpact.cadastros}</strong> cadastro(s) serão afetados indiretamente
+                      <strong>{deleteImpact.cadastros}</strong> cadastro(s) serão desvinculados
                     </li>
                   )}
                 </ul>
