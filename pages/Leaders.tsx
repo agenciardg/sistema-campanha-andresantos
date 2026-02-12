@@ -38,6 +38,9 @@ const Leaders: React.FC = () => {
   const [notificationAvailable, setNotificationAvailable] = useState(false);
   const [sendNotification, setSendNotification] = useState(true);
   const [renotifyingId, setRenotifyingId] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitStep, setSubmitStep] = useState('');
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [formData, setFormData] = useState<NewLeaderForm>({
     name: '',
     team: '',
@@ -165,6 +168,14 @@ const Leaders: React.FC = () => {
     }
   };
 
+  // Auto-dismiss toast
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -174,12 +185,13 @@ const Leaders: React.FC = () => {
     }
 
     if (!formData.birthdate) {
-      alert('❌ Data de Nascimento obrigatória!\n\nPor favor, informe a data de nascimento.');
+      alert('Data de Nascimento obrigatória! Por favor, informe a data de nascimento.');
       return;
     }
 
     try {
-      setLoading(true);
+      setSubmitting(true);
+      setSubmitStep('Localizando endereço...');
 
       // Geocodificar endereço usando serviço centralizado
       let latitude: number | null = null;
@@ -201,6 +213,8 @@ const Leaders: React.FC = () => {
         }
       }
 
+      setSubmitStep('Salvando liderança...');
+
       const novaLideranca = await liderancasService.criar({
         equipe_id: formData.team,
         organizacao_id: formData.organization || null,
@@ -221,34 +235,41 @@ const Leaders: React.FC = () => {
         ativo: true,
       });
 
-      await carregarDados();
+      // Liderança criada com sucesso - fechar modal imediatamente
+      const shouldNotify = sendNotification && notificationAvailable && novaLideranca && novaLideranca.telefone && novaLideranca.codigo_unico;
+      const equipeNome = equipes.find(eq => eq.id === formData.team)?.nome;
 
-      // Enviar notificação via WhatsApp (não bloqueia se falhar)
-      if (sendNotification && notificationAvailable && novaLideranca && novaLideranca.telefone && novaLideranca.codigo_unico) {
-        try {
-          // Buscar nome da equipe
-          const equipe = equipes.find(e => e.id === formData.team);
-
-          await notificarNovaLideranca({
-            nome: novaLideranca.nome,
-            telefone: novaLideranca.telefone,
-            codigo_unico: novaLideranca.codigo_unico,
-            equipe_nome: equipe?.nome,
-          });
-          console.log('Notificação de liderança enviada com sucesso');
-        } catch (notifError) {
-          console.error('Falha ao enviar notificação WhatsApp:', notifError);
-          // Não bloqueia - a liderança já foi criada com sucesso
-        }
-      }
       setShowModal(false);
-      setSendNotification(true); // Reset para próxima vez
+      setSubmitting(false);
+      setSubmitStep('');
+      setSendNotification(true);
       setFormData({ name: '', team: '', phone: '', email: '', birthdate: '', goal: '', organization: '', cep: '', street: '', number: '', neighborhood: '', city: '' });
+
+      setToast({ message: `Liderança "${novaLideranca.nome}" criada com sucesso!`, type: 'success' });
+
+      // Recarregar dados em background
+      carregarDados();
+
+      // Enviar notificação WhatsApp em background (não bloqueia a UI)
+      if (shouldNotify) {
+        setToast({ message: `Liderança criada! Enviando WhatsApp para ${novaLideranca.nome}...`, type: 'info' });
+        notificarNovaLideranca({
+          nome: novaLideranca.nome,
+          telefone: novaLideranca.telefone!,
+          codigo_unico: novaLideranca.codigo_unico!,
+          equipe_nome: equipeNome,
+        }).then(() => {
+          setToast({ message: `WhatsApp enviado para ${novaLideranca.nome}!`, type: 'success' });
+        }).catch((notifError) => {
+          console.error('Falha ao enviar notificação WhatsApp:', notifError);
+          setToast({ message: `Liderança criada, mas falha ao enviar WhatsApp.`, type: 'error' });
+        });
+      }
     } catch (error) {
       console.error('Erro ao criar liderança:', error);
-      alert('Erro ao criar liderança. Tente novamente.');
-    } finally {
-      setLoading(false);
+      setSubmitting(false);
+      setSubmitStep('');
+      setToast({ message: 'Erro ao criar liderança. Tente novamente.', type: 'error' });
     }
   };
 
@@ -817,7 +838,7 @@ const Leaders: React.FC = () => {
                 <div className="flex gap-3 pt-4 border-t border-gray-100 dark:border-white/5 mt-2">
                   <button
                     type="button"
-                    disabled={loading}
+                    disabled={submitting}
                     onClick={() => {
                       setShowModal(false);
                       setFormData({ name: '', team: '', phone: '', email: '', birthdate: '', goal: '', organization: '', cep: '', street: '', number: '', neighborhood: '', city: '' });
@@ -828,11 +849,11 @@ const Leaders: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={submitting}
                     className="flex-1 px-5 py-3 bg-gradient-to-r from-[#1e3a5f] to-[#1e5a8d] hover:from-[#1e4976] hover:to-[#2563eb] text-white font-semibold rounded-xl transition-all shadow-lg shadow-[#1e3a5f]/25 hover:shadow-[#1e5a8d]/40 hover:scale-[1.02] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    {loading ? (
-                      <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Criando...</>
+                    {submitting ? (
+                      <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /><span className="text-sm">{submitStep || 'Criando...'}</span></>
                     ) : (
                       <><Icon name="check" className="text-[18px]" />Criar Liderança</>
                     )}
@@ -1071,6 +1092,29 @@ const Leaders: React.FC = () => {
         type="danger"
         loading={deleting}
       />
+
+      {/* Toast de feedback */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-[60] animate-slide-up">
+          <div
+            className={`flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl border backdrop-blur-sm max-w-sm ${
+              toast.type === 'success'
+                ? 'bg-emerald-500/90 border-emerald-400/30 text-white'
+                : toast.type === 'error'
+                ? 'bg-red-500/90 border-red-400/30 text-white'
+                : 'bg-blue-500/90 border-blue-400/30 text-white'
+            }`}
+          >
+            {toast.type === 'success' && <Icon name="check_circle" className="text-[20px] flex-shrink-0" />}
+            {toast.type === 'error' && <Icon name="error" className="text-[20px] flex-shrink-0" />}
+            {toast.type === 'info' && <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin flex-shrink-0" />}
+            <span className="text-sm font-medium">{toast.message}</span>
+            <button onClick={() => setToast(null)} className="ml-2 hover:opacity-70 flex-shrink-0">
+              <Icon name="close" className="text-[16px]" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

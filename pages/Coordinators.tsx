@@ -40,6 +40,9 @@ const Coordinators: React.FC = () => {
   const [notificationAvailable, setNotificationAvailable] = useState(false);
   const [sendNotification, setSendNotification] = useState(true);
   const [renotifyingId, setRenotifyingId] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitStep, setSubmitStep] = useState('');
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [formData, setFormData] = useState<NewCoordinatorForm>({
     name: '',
     region: '',
@@ -130,16 +133,25 @@ const Coordinators: React.FC = () => {
     }
   };
 
+  // Auto-dismiss toast
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.birthdate) {
-      alert('❌ Data de Nascimento obrigatória!\n\nPor favor, informe a data de nascimento.');
+      alert('Data de Nascimento obrigatória! Por favor, informe a data de nascimento.');
       return;
     }
 
     try {
-      setLoading(true);
+      setSubmitting(true);
+      setSubmitStep('Localizando endereço...');
 
       // Geocodificar endereço usando serviço centralizado
       let latitude: number | null = null;
@@ -160,6 +172,8 @@ const Coordinators: React.FC = () => {
           longitude = resultado.coordenadas.longitude;
         }
       }
+
+      setSubmitStep('Salvando coordenador...');
 
       const novoCoordenador = await coordenadoresService.criar({
         nome: formData.name,
@@ -183,6 +197,7 @@ const Coordinators: React.FC = () => {
 
       // Vincular coordenador às equipes selecionadas
       if (selectedEquipeIds.length > 0 && novoCoordenador?.id) {
+        setSubmitStep('Vinculando equipes...');
         const vinculos = selectedEquipeIds.map(equipeId => ({
           equipe_id: equipeId,
           coordenador_id: novoCoordenador.id,
@@ -190,44 +205,40 @@ const Coordinators: React.FC = () => {
         await supabase.from('pltdataandrebueno_equipe_coordenadores').insert(vinculos);
       }
 
-      await carregarDados();
+      // Coordenador criado com sucesso - fechar modal imediatamente
+      const shouldNotify = sendNotification && notificationAvailable && novoCoordenador && novoCoordenador.telefone && novoCoordenador.codigo_unico;
 
-      // Enviar notificação via WhatsApp (não bloqueia se falhar)
-      if (sendNotification && notificationAvailable && novoCoordenador && novoCoordenador.telefone && novoCoordenador.codigo_unico) {
-        try {
-          await notificarNovoCoordenador({
-            nome: novoCoordenador.nome,
-            telefone: novoCoordenador.telefone,
-            codigo_unico: novoCoordenador.codigo_unico,
-          });
-          console.log('Notificação de coordenador enviada com sucesso');
-        } catch (notifError) {
-          console.error('Falha ao enviar notificação WhatsApp:', notifError);
-          // Não bloqueia - o coordenador já foi criado com sucesso
-        }
-      }
       setShowModal(false);
-      setSendNotification(true); // Reset para próxima vez
+      setSubmitting(false);
+      setSubmitStep('');
+      setSendNotification(true);
       setSelectedEquipeIds([]);
-      setFormData({
-        name: '',
-        region: '',
-        phone: '',
-        email: '',
-        birthdate: '',
-        goal: '',
-        organization: '',
-        cep: '',
-        street: '',
-        number: '',
-        neighborhood: '',
-        city: '',
-      });
+      setFormData({ name: '', region: '', phone: '', email: '', birthdate: '', goal: '', organization: '', cep: '', street: '', number: '', neighborhood: '', city: '' });
+
+      setToast({ message: `Coordenador "${novoCoordenador.nome}" criado com sucesso!`, type: 'success' });
+
+      // Recarregar dados em background
+      carregarDados();
+
+      // Enviar notificação WhatsApp em background (não bloqueia a UI)
+      if (shouldNotify) {
+        setToast({ message: `Coordenador criado! Enviando WhatsApp para ${novoCoordenador.nome}...`, type: 'info' });
+        notificarNovoCoordenador({
+          nome: novoCoordenador.nome,
+          telefone: novoCoordenador.telefone!,
+          codigo_unico: novoCoordenador.codigo_unico!,
+        }).then(() => {
+          setToast({ message: `WhatsApp enviado para ${novoCoordenador.nome}!`, type: 'success' });
+        }).catch((notifError) => {
+          console.error('Falha ao enviar notificação WhatsApp:', notifError);
+          setToast({ message: `Coordenador criado, mas falha ao enviar WhatsApp.`, type: 'error' });
+        });
+      }
     } catch (error) {
       console.error('Erro ao criar coordenador:', error);
-      alert('Erro ao criar coordenador. Tente novamente.');
-    } finally {
-      setLoading(false);
+      setSubmitting(false);
+      setSubmitStep('');
+      setToast({ message: 'Erro ao criar coordenador. Tente novamente.', type: 'error' });
     }
   };
 
@@ -867,17 +878,17 @@ const Coordinators: React.FC = () => {
                       setFormData({ name: '', region: '', phone: '', email: '', birthdate: '', goal: '', organization: '', cep: '', street: '', number: '', neighborhood: '', city: '' });
                     }}
                     className="flex-1 px-5 py-3 dark:bg-white/[0.03] light:bg-gray-50 border dark:border-white/10 light:border-gray-300 rounded-xl dark:text-gray-300 light:text-gray-600 dark:hover:bg-white/[0.05] light:hover:bg-gray-100 dark:hover:text-white light:hover:text-gray-900 transition-all font-light disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={loading}
+                    disabled={submitting}
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={submitting}
                     className="flex-1 px-5 py-3 bg-gradient-to-r from-[#1e3a5f] to-[#1e5a8d] hover:from-[#1e4976] hover:to-[#2563eb] text-white font-medium rounded-xl transition-all shadow-lg shadow-[#1e3a5f]/25 hover:shadow-[#1e5a8d]/40 hover:scale-[1.02] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    {loading ? (
-                      <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Criando...</>
+                    {submitting ? (
+                      <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /><span className="text-sm">{submitStep || 'Criando...'}</span></>
                     ) : (
                       <><Icon name="check" className="text-[18px]" />Criar Coordenador</>
                     )}
@@ -1112,6 +1123,29 @@ const Coordinators: React.FC = () => {
         type="danger"
         loading={deleting}
       />
+
+      {/* Toast de feedback */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-[60] animate-slide-up">
+          <div
+            className={`flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl border backdrop-blur-sm max-w-sm ${
+              toast.type === 'success'
+                ? 'bg-emerald-500/90 border-emerald-400/30 text-white'
+                : toast.type === 'error'
+                ? 'bg-red-500/90 border-red-400/30 text-white'
+                : 'bg-blue-500/90 border-blue-400/30 text-white'
+            }`}
+          >
+            {toast.type === 'success' && <Icon name="check_circle" className="text-[20px] flex-shrink-0" />}
+            {toast.type === 'error' && <Icon name="error" className="text-[20px] flex-shrink-0" />}
+            {toast.type === 'info' && <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin flex-shrink-0" />}
+            <span className="text-sm font-medium">{toast.message}</span>
+            <button onClick={() => setToast(null)} className="ml-2 hover:opacity-70 flex-shrink-0">
+              <Icon name="close" className="text-[16px]" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
