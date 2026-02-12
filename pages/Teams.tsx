@@ -48,7 +48,9 @@ const Teams: React.FC = () => {
   const [showRegeoConfirmModal, setShowRegeoConfirmModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; nome: string } | null>(null);
+  const [deleteImpact, setDeleteImpact] = useState<{ liderancas: number; coordenadores: number; cadastros: number } | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [loadingImpact, setLoadingImpact] = useState(false);
   const [reGeocodificando, setReGeocodificando] = useState(false);
   const [loading, setLoading] = useState(true);
   const [equipes, setEquipes] = useState<Equipe[]>([]);
@@ -219,11 +221,22 @@ const Teams: React.FC = () => {
     }
   };
 
-  // Abrir modal de exclusão
-  const abrirModalExcluir = (e: React.MouseEvent, id: string, nome: string) => {
+  // Abrir modal de exclusão com verificação de dependências
+  const abrirModalExcluir = async (e: React.MouseEvent, id: string, nome: string) => {
     e.stopPropagation();
     setDeleteTarget({ id, nome });
+    setDeleteImpact(null);
     setShowDeleteModal(true);
+    setLoadingImpact(true);
+    try {
+      const impact = await equipesService.verificarDependencias(id);
+      setDeleteImpact(impact);
+    } catch (err) {
+      console.error('Erro ao verificar dependências:', err);
+      setDeleteImpact({ liderancas: 0, coordenadores: 0, cadastros: 0 });
+    } finally {
+      setLoadingImpact(false);
+    }
   };
 
   // Confirmar exclusão
@@ -639,10 +652,49 @@ const Teams: React.FC = () => {
         onClose={() => {
           setShowDeleteModal(false);
           setDeleteTarget(null);
+          setDeleteImpact(null);
         }}
         onConfirm={confirmarExclusao}
         title="Excluir Equipe"
-        message={`Tem certeza que deseja excluir a equipe "${deleteTarget?.nome}"? As lideranças e cadastros vinculados a esta equipe também serão afetados. Esta ação não pode ser desfeita.`}
+        message={
+          <div className="space-y-3">
+            <p>Tem certeza que deseja excluir a equipe <strong className="text-white">"{deleteTarget?.nome}"</strong>?</p>
+            {loadingImpact ? (
+              <div className="flex items-center gap-2 text-gray-500 text-xs">
+                <div className="w-3 h-3 border-2 border-gray-500 border-t-transparent rounded-full animate-spin" />
+                Verificando dependências...
+              </div>
+            ) : deleteImpact && (deleteImpact.liderancas > 0 || deleteImpact.coordenadores > 0 || deleteImpact.cadastros > 0) ? (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 space-y-1.5">
+                <p className="text-red-400 text-xs font-semibold flex items-center gap-1.5">
+                  <Icon name="warning" className="text-[14px]" />
+                  Esta equipe possui vínculos ativos:
+                </p>
+                <ul className="text-xs text-gray-300 space-y-1 ml-5">
+                  {deleteImpact.liderancas > 0 && (
+                    <li className="flex items-center gap-1.5">
+                      <Icon name="groups" className="text-[14px] text-amber-400" />
+                      <strong>{deleteImpact.liderancas}</strong> liderança(s) serão desvinculadas
+                    </li>
+                  )}
+                  {deleteImpact.coordenadores > 0 && (
+                    <li className="flex items-center gap-1.5">
+                      <Icon name="supervisor_account" className="text-[14px] text-blue-400" />
+                      <strong>{deleteImpact.coordenadores}</strong> coordenador(es) serão desvinculados
+                    </li>
+                  )}
+                  {deleteImpact.cadastros > 0 && (
+                    <li className="flex items-center gap-1.5">
+                      <Icon name="person" className="text-[14px] text-purple-400" />
+                      <strong>{deleteImpact.cadastros}</strong> cadastro(s) serão afetados indiretamente
+                    </li>
+                  )}
+                </ul>
+              </div>
+            ) : null}
+            <p className="text-xs text-gray-500">Esta ação não pode ser desfeita.</p>
+          </div>
+        }
         confirmText="Excluir"
         type="danger"
         loading={deleting}

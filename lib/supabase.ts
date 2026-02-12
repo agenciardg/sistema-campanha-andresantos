@@ -431,6 +431,40 @@ export const equipesService = {
     return data;
   },
 
+  async verificarDependencias(id: string): Promise<{ liderancas: number; coordenadores: number; cadastros: number }> {
+    // Contar lideranças vinculadas
+    const { count: liderancasCount } = await supabase
+      .from('pltdataandrebueno_liderancas')
+      .select('*', { count: 'exact', head: true })
+      .eq('equipe_id', id);
+
+    // Contar coordenadores vinculados (via junction table)
+    const { count: coordenadoresCount } = await supabase
+      .from('pltdataandrebueno_equipe_coordenadores')
+      .select('*', { count: 'exact', head: true })
+      .eq('equipe_id', id);
+
+    // Contar cadastros vinculados via lideranças desta equipe
+    const { data: liderancaIds } = await supabase
+      .from('pltdataandrebueno_liderancas')
+      .select('id')
+      .eq('equipe_id', id);
+    let cadastrosCount = 0;
+    if (liderancaIds && liderancaIds.length > 0) {
+      const { count } = await supabase
+        .from('pltdataandrebueno_cadastros')
+        .select('*', { count: 'exact', head: true })
+        .in('lideranca_id', liderancaIds.map(l => l.id));
+      cadastrosCount = count || 0;
+    }
+
+    return {
+      liderancas: liderancasCount || 0,
+      coordenadores: coordenadoresCount || 0,
+      cadastros: cadastrosCount,
+    };
+  },
+
   async excluir(id: string): Promise<void> {
     // Desvincular lideranças da equipe antes de excluir (FK com NO ACTION)
     const { error: unlinkError } = await supabase
@@ -438,6 +472,8 @@ export const equipesService = {
       .update({ equipe_id: null, atualizado_em: new Date().toISOString() })
       .eq('equipe_id', id);
     if (unlinkError) throw unlinkError;
+
+    // equipe_coordenadores tem CASCADE DELETE, então é auto-removido
 
     const { error } = await supabase
       .from('pltdataandrebueno_equipes')
@@ -546,7 +582,35 @@ export const coordenadoresService = {
     return data;
   },
 
+  async verificarDependencias(id: string): Promise<{ cadastros: number; equipes: number }> {
+    // Contar cadastros vinculados diretamente ao coordenador
+    const { count: cadastrosCount } = await supabase
+      .from('pltdataandrebueno_cadastros')
+      .select('*', { count: 'exact', head: true })
+      .eq('coordenador_id', id);
+
+    // Contar equipes vinculadas (via junction table)
+    const { count: equipesCount } = await supabase
+      .from('pltdataandrebueno_equipe_coordenadores')
+      .select('*', { count: 'exact', head: true })
+      .eq('coordenador_id', id);
+
+    return {
+      cadastros: cadastrosCount || 0,
+      equipes: equipesCount || 0,
+    };
+  },
+
   async excluir(id: string): Promise<void> {
+    // Desvincular cadastros do coordenador antes de excluir (FK com NO ACTION)
+    const { error: unlinkError } = await supabase
+      .from('pltdataandrebueno_cadastros')
+      .update({ coordenador_id: null })
+      .eq('coordenador_id', id);
+    if (unlinkError) throw unlinkError;
+
+    // equipe_coordenadores tem CASCADE DELETE, então é auto-removido
+
     const { error } = await supabase
       .from('pltdataandrebueno_coordenadores')
       .delete()
@@ -657,7 +721,23 @@ export const liderancasService = {
     return data;
   },
 
+  async verificarDependencias(id: string): Promise<{ cadastros: number }> {
+    const { count: cadastrosCount } = await supabase
+      .from('pltdataandrebueno_cadastros')
+      .select('*', { count: 'exact', head: true })
+      .eq('lideranca_id', id);
+
+    return { cadastros: cadastrosCount || 0 };
+  },
+
   async excluir(id: string): Promise<void> {
+    // Desvincular cadastros da liderança antes de excluir (FK com NO ACTION)
+    const { error: unlinkError } = await supabase
+      .from('pltdataandrebueno_cadastros')
+      .update({ lideranca_id: null })
+      .eq('lideranca_id', id);
+    if (unlinkError) throw unlinkError;
+
     const { error } = await supabase
       .from('pltdataandrebueno_liderancas')
       .delete()

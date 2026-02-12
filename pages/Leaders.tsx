@@ -28,7 +28,9 @@ const Leaders: React.FC = () => {
   const [editingLideranca, setEditingLideranca] = useState<Lideranca | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; nome: string } | null>(null);
+  const [deleteImpact, setDeleteImpact] = useState<{ cadastros: number } | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [loadingImpact, setLoadingImpact] = useState(false);
   const [loading, setLoading] = useState(true);
   const [reGeocodificando, setReGeocodificando] = useState(false);
   const [liderancas, setLiderancas] = useState<Lideranca[]>([]);
@@ -364,11 +366,22 @@ const Leaders: React.FC = () => {
     }
   };
 
-  // Abrir modal de exclusão
-  const abrirModalExcluir = (e: React.MouseEvent, id: string, nome: string) => {
+  // Abrir modal de exclusão com verificação de dependências
+  const abrirModalExcluir = async (e: React.MouseEvent, id: string, nome: string) => {
     e.stopPropagation();
     setDeleteTarget({ id, nome });
+    setDeleteImpact(null);
     setShowDeleteModal(true);
+    setLoadingImpact(true);
+    try {
+      const impact = await liderancasService.verificarDependencias(id);
+      setDeleteImpact(impact);
+    } catch (err) {
+      console.error('Erro ao verificar dependências:', err);
+      setDeleteImpact({ cadastros: 0 });
+    } finally {
+      setLoadingImpact(false);
+    }
   };
 
   // Confirmar exclusão
@@ -1084,10 +1097,35 @@ const Leaders: React.FC = () => {
         onClose={() => {
           setShowDeleteModal(false);
           setDeleteTarget(null);
+          setDeleteImpact(null);
         }}
         onConfirm={confirmarExclusao}
         title="Excluir Liderança"
-        message={`Tem certeza que deseja excluir a liderança "${deleteTarget?.nome}"? Os cadastros vinculados a esta liderança também serão afetados. Esta ação não pode ser desfeita.`}
+        message={
+          <div className="space-y-3">
+            <p>Tem certeza que deseja excluir a liderança <strong className="text-white">"{deleteTarget?.nome}"</strong>?</p>
+            {loadingImpact ? (
+              <div className="flex items-center gap-2 text-gray-500 text-xs">
+                <div className="w-3 h-3 border-2 border-gray-500 border-t-transparent rounded-full animate-spin" />
+                Verificando dependências...
+              </div>
+            ) : deleteImpact && deleteImpact.cadastros > 0 ? (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 space-y-1.5">
+                <p className="text-red-400 text-xs font-semibold flex items-center gap-1.5">
+                  <Icon name="warning" className="text-[14px]" />
+                  Esta liderança possui vínculos ativos:
+                </p>
+                <ul className="text-xs text-gray-300 space-y-1 ml-5">
+                  <li className="flex items-center gap-1.5">
+                    <Icon name="person" className="text-[14px] text-purple-400" />
+                    <strong>{deleteImpact.cadastros}</strong> cadastro(s) serão desvinculados
+                  </li>
+                </ul>
+              </div>
+            ) : null}
+            <p className="text-xs text-gray-500">Esta ação não pode ser desfeita.</p>
+          </div>
+        }
         confirmText="Excluir"
         type="danger"
         loading={deleting}
